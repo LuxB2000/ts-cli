@@ -4,9 +4,10 @@
  * The default properties are: softDeleted, creationDate, modificationDate, id
  */
 
-export interface %Model_Name% {
-  id:               string;
-  softDeleted:      boolean;
-  creationDate:     Date;
-  modificationDate: Date;
+export interface %Model_NAME% {
+  id: string;
+  creationDate: Date;
+  softDeleted: boolean;
+  lastModificationDate: Date;
+  lastModificationBy: string;
 }

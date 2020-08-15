@@ -76,8 +76,6 @@ const run = async () => {
     const $path = path.join(PATH, aGeneral.path);
     console.log(`path: ${$path}`);
     const aEnd = await inquirer.prompt(qEnd);
-    console.log('got positive response with');
-    console.log(aEnd);
     data.end = {
       name: aEnd.end
     };
@@ -86,7 +84,6 @@ const run = async () => {
       
       // collect data
       const aBE = await inquirer.prompt(qBE);
-      console.log(aBE);
       const _name = aBE.modelName.trim().toLowerCase();
       data.end.path = 'nestjs';
       data.type = {
@@ -104,21 +101,35 @@ const run = async () => {
       if (data.type.name === 'model') {
         // the buisness model
         templates.push({
-          file: fs.readFileSync(path.join(path.join(path.join(`${templatePath}`,`${data.end.path}`),`models`), `model.buisness.template.txt`)),
-          path: `${$path}\\models\\`,
+          file: fs.readFileSync(path.join(path.join(path.join(`${templatePath}`,`${data.end.path}`),`models`), `model.buisness.template.txt`)).toString(),
+          path: path.join($path, `models`),
           fileName: `${data.names.name}.model.ts`,
+        });
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(`${templatePath}`,`${data.end.path}`),`models`), `dto.template.txt`)).toString(),
+          path: path.join($path, `dto`),
+          fileName: `${data.names.name}.dto.ts`,
         });
       }
     } else {
       // Front End: Angular
     }
 
+    // console.log(templates);
+
     // files generation
     for(const template of templates) {
       if ( !fs.existsSync(template.path) ) {
         fs.mkdirSync(template.path);
       }
-      fs.writeFileSync(path.join(template.path, template.fileName), template.file);
+      let text = template.file;
+      text = text.replace('%model_NAME%', data.names.name);
+      text = text.replace('%models_NAME%', data.names.names);
+      text = text.replace('%Model_NAME%', data.names.Name);
+      text = text.replace('%Models_NAME%', data.names.Names);
+      text = text.replace('%MODEL_NAME%', data.names.NAME);
+      text = text.replace('%MODELS_NAME%', data.names.NAMES);
+      fs.writeFileSync(path.join(template.path, template.fileName), text);
     }
   } catch (error) {
     console.log(chalk.red('Error during the process.'));
