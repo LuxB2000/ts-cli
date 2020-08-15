@@ -2,6 +2,15 @@ const chalk = require('chalk');
 const clear = require('clear');
 const figlet = require('figlet');
 const inquirer = require('inquirer');
+const fs = require('fs');
+const path = require('path');
+
+const qGeneral = [{
+  name : 'path',
+  type : 'input',
+  message : 'path to generate the files',
+  default : '.',
+}];
 
 const qEnd = [
   {
@@ -34,7 +43,7 @@ const qBE = [
     },
   },
   {
-    name: 'name',
+    name: 'modelName',
     type: 'input',
     message: `What the name of the ressource?`,
     validate: (value) => {
@@ -46,16 +55,38 @@ const qBE = [
   }
 ];
 
+const PATH = process.cwd();
+
+// main function
 const run = async () => {
   
-  //console.log(credentials);
   try {
+    let data = {};
+    const aGeneral = await inquirer.prompt(qGeneral);
+    console.log(`path: ${aGeneral.path}`);
     const aEnd = await inquirer.prompt(qEnd);
     console.log('got positive response with');
     console.log(aEnd);
     if (aEnd.end === 'be') {
       // Back End: NestJS
-      const aBE = inquirer.prompt(qBE);
+      data.end = 'be';
+      // collect data
+      const aBE = await inquirer.prompt(qBE);
+      console.log(aBE);
+      const _name = aBE.modelName.trim().toLowerCase();
+      data.type = {
+        name: aBE.type,
+      };
+      data.names = {
+        input: aBE.modelName,
+        name: _name,
+        names: _name + 's',
+        Name: _name.slice(0, 1).toUpperCase() + _name.slice(1, _name.length),
+        Names: _name.slice(0, 1).toUpperCase() + _name.slice(1, _name.length) + 's',
+        NAME: _name.toUpperCase(),
+        NAMES: _name.toUpperCase() + 'S', 
+      };
+      console.log(data);
     } else {
       // Front End: Angular
     }
