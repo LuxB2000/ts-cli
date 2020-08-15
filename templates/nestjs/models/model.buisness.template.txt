@@ -1,0 +1,12 @@
+/**
+ * This file has been generated using TS-CLI.
+ * This is a buisness model interface.
+ * The default properties are: softDeleted, creationDate, modificationDate, id
+ */
+
+export interface %Model_Name% {
+  id:               string;
+  softDeleted:      boolean;
+  creationDate:     Date;
+  modificationDate: Date;
+}

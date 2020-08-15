@@ -55,25 +55,40 @@ const qBE = [
   }
 ];
 
-const PATH = process.cwd();
+let PATH = process.env.CLIPATH || process.cwd();
 
+/**
+ * DEBUG
+ */
+PATH += '..\\..\\test\\dummy-nestjs';
+/**
+ * // DEBUG
+ */
+
+ const templatePath = process.cwd() + '/templates';
+ const templates = [];
 // main function
 const run = async () => {
   
   try {
     let data = {};
     const aGeneral = await inquirer.prompt(qGeneral);
-    console.log(`path: ${aGeneral.path}`);
+    const $path = path.join(PATH, aGeneral.path);
+    console.log(`path: ${$path}`);
     const aEnd = await inquirer.prompt(qEnd);
     console.log('got positive response with');
     console.log(aEnd);
+    data.end = {
+      name: aEnd.end
+    };
     if (aEnd.end === 'be') {
       // Back End: NestJS
-      data.end = 'be';
+      
       // collect data
       const aBE = await inquirer.prompt(qBE);
       console.log(aBE);
       const _name = aBE.modelName.trim().toLowerCase();
+      data.end.path = 'nestjs';
       data.type = {
         name: aBE.type,
       };
@@ -86,9 +101,24 @@ const run = async () => {
         NAME: _name.toUpperCase(),
         NAMES: _name.toUpperCase() + 'S', 
       };
-      console.log(data);
+      if (data.type.name === 'model') {
+        // the buisness model
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(`${templatePath}`,`${data.end.path}`),`models`), `model.buisness.template.txt`)),
+          path: `${$path}\\models\\`,
+          fileName: `${data.names.name}.model.ts`,
+        });
+      }
     } else {
       // Front End: Angular
+    }
+
+    // files generation
+    for(const template of templates) {
+      if ( !fs.existsSync(template.path) ) {
+        fs.mkdirSync(template.path);
+      }
+      fs.writeFileSync(path.join(template.path, template.fileName), template.file);
     }
   } catch (error) {
     console.log(chalk.red('Error during the process.'));
