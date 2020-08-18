@@ -101,12 +101,12 @@ const run = async () => {
       if (data.type.name === 'model') {
         // the buisness model
         templates.push({
-          file: fs.readFileSync(path.join(path.join(path.join(`${templatePath}`,`${data.end.path}`),`models`), `model.buisness.template.txt`)).toString(),
+          file: fs.readFileSync(path.join(path.join(templatePath, `models`), `model.buisness.template.txt`)).toString(),
           path: path.join($path, `models`),
           fileName: `${data.names.name}.model.ts`,
         });
         templates.push({
-          file: fs.readFileSync(path.join(path.join(path.join(`${templatePath}`,`${data.end.path}`),`models`), `dto.template.txt`)).toString(),
+          file: fs.readFileSync(path.join(path.join(templatePath, `models`), `dto.template.txt`)).toString(),
           path: path.join($path, `dto`),
           fileName: `${data.names.name}.dto.ts`,
         });
@@ -123,12 +123,12 @@ const run = async () => {
         fs.mkdirSync(template.path);
       }
       let text = template.file;
-      text = text.replace('%model_NAME%', data.names.name);
-      text = text.replace('%models_NAME%', data.names.names);
-      text = text.replace('%Model_NAME%', data.names.Name);
-      text = text.replace('%Models_NAME%', data.names.Names);
-      text = text.replace('%MODEL_NAME%', data.names.NAME);
-      text = text.replace('%MODELS_NAME%', data.names.NAMES);
+      text = text.replace(/%model_NAME%/g, data.names.name);
+      text = text.replace(/%models_NAME%/g, data.names.names);
+      text = text.replace(/%Model_NAME%/g, data.names.Name);
+      text = text.replace(/%Models_NAME%/g, data.names.Names);
+      text = text.replace(/%MODEL_NAME%/g, data.names.NAME);
+      text = text.replace(/%MODELS_NAME%/g, data.names.NAMES);
       fs.writeFileSync(path.join(template.path, template.fileName), text);
     }
   } catch (error) {

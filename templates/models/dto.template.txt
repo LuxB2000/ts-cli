@@ -1,4 +1,10 @@
 
+/**
+ * This file has been generated using TS-CLI.
+ * This represents the Data Transfert Object (DTO).
+ * The default properties are id and creationDate.
+ */
+
 export interface %Model_NAME%DTO {
   id: string;
   creationDate: Date;
