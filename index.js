@@ -60,7 +60,7 @@ let PATH = process.env.CLIPATH || process.cwd();
 /**
  * DEBUG
  */
-PATH += '..\\..\\test\\dummy-nestjs';
+PATH += '..\\..\\test\\dummy-nestjs\\src';
 /**
  * // DEBUG
  */
@@ -85,7 +85,7 @@ const run = async () => {
       // collect data
       const aBE = await inquirer.prompt(qBE);
       const _name = aBE.modelName.trim().toLowerCase();
-      data.end.path = 'nestjs';
+      data.end.path = 'back-end';
       data.type = {
         name: aBE.type,
       };
@@ -101,29 +101,29 @@ const run = async () => {
       if (data.type.name === 'model') {
         // the buisness model
         templates.push({
-          file: fs.readFileSync(path.join(path.join(templatePath, `models`), `model.buisness.template.txt`)).toString(),
+          file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), `models`), `model.buisness.template.txt`)).toString(),
           path: path.join($path, `models`),
           fileName: `${data.names.name}.model.ts`,
         });
         // the dto model
         templates.push({
-          file: fs.readFileSync(path.join(path.join(templatePath, `models`), `dto.template.txt`)).toString(),
+          file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), `models`), `dto.template.txt`)).toString(),
           path: path.join($path, `dto`),
           fileName: `${data.names.name}.dto.ts`,
         });
         // the mapper files (class + unit tests + mock data files)
         templates.push({
-          file: fs.readFileSync(path.join(path.join(templatePath, `models`), `mapper.template.txt`)).toString(),
+          file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), `models`), `mapper.template.txt`)).toString(),
           path: path.join($path, 'mapper'),
           fileName: `${data.names.name}.mapper.ts`,
         });
         templates.push({
-          file: fs.readFileSync(path.join(path.join(templatePath, `models`), `mapper.template.spec.txt`)).toString(),
+          file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), `models`), `mapper.template.spec.txt`)).toString(),
           path: path.join($path, 'mapper'),
           fileName: `${data.names.name}.mapper.spec.ts`,
         });
         templates.push({
-          file: fs.readFileSync(path.join(path.join(templatePath, `models`), `mock.data.txt`)).toString(),
+          file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), `models`), `mock.data.txt`)).toString(),
           path: path.join(path.join($path, 'test'), 'data'),
           fileName: `${data.names.name}.mock.data.ts`,
         });
@@ -137,7 +137,7 @@ const run = async () => {
     // files generation
     for(const template of templates) {
       if ( !fs.existsSync(template.path) ) {
-        fs.mkdirSync(template.path);
+        fs.mkdirSync(template.path, { recursive: true });
       }
       let text = template.file;
       text = text.replace(/%model_NAME%/g, data.names.name);

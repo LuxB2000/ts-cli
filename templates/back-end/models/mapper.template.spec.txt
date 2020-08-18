@@ -4,7 +4,7 @@
  */
 
 import { %Model_NAME%Mapper } from './%model_NAME%.mapper';
-import { MOCK_%MODEL_NAME%_MODELS, MOCK_%MODEL_NAME%_DTOS } from '../../test/data/mocks/%model_NAME%.mongo.mock';
+import { MOCK_%MODEL_NAME%_DTOS, MOCK_%MODEL_NAME%_MODELS } from '../test/data/actor.mock.data';
 
 describe('AlgorithmMapper', () => {
   describe('toDTO', () => {
