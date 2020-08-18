@@ -1,18 +1,19 @@
-
 /**
  * This file has been generated using TS-CLI.
  * This represents the Data Transfert Object (DTO).
  * The default properties are id and creationDate.
  */
 
+ import { %Model_NAME% } from "models/%model_NAME%.model";
+
 export interface %Model_NAME%DTO {
   id: string;
   creationDate: Date;
 }
 
-export interface %Model_NAME%PaginatedDTO {
+export interface Paginated%Model_NAME%DTO {
   pageIndex:  number;
   pageSize:   number;
   totalCount: number;
-  %models_NAME%: %model_NAME%[]
+  %models_NAME%: %Model_NAME%[]
 }

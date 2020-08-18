@@ -1,0 +1,29 @@
+/**
+ * This file has been generated using TS-CLI.
+ * This file contains the Unit test relative the %Model_NAME% Mapper.
+ */
+
+import { %Model_NAME%Mapper } from './%model_NAME%.mapper';
+import { MOCK_%MODEL_NAME%_MODELS, MOCK_%MODEL_NAME%_DTOS } from '../../test/data/mocks/%model_NAME%.mongo.mock';
+
+describe('AlgorithmMapper', () => {
+  describe('toDTO', () => {
+    it(`should correctly map a model into a DTO`, () => {
+      expect(%Model_NAME%Mapper.toDTO(MOCK_%MODEL_NAME%_MODELS[0])).toEqual({
+        id: 'abc1',
+        creationDate: new Date(1234567880),
+      });
+    });
+  });
+  describe('fromDTO', () => {
+    it(`should correctly map a model into a DTO`, () => {
+      expect(%Model_NAME%Mapper.fromDTO(MOCK_%MODEL_NAME%_DTOS[0])).toEqual({
+        id: 'abc1',
+        creationDate: new Date(1234567880),
+        lastModificationDate: undefined,
+        lastModificationBy: undefined,
+        deleted: undefined,
+      });
+    });
+  });
+});

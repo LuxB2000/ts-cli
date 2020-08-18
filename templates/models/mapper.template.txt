@@ -1,0 +1,37 @@
+/**
+ * This file has been generated using TS-CLI.
+ * This class contains only static function mapping %Model_NAME% objects.
+ */
+
+import { %Model_NAME% } from '../models/%model_NAME%.model';
+import { %Model_NAME%DTO } from '../dto/%model_NAME%.dto';
+
+export class %Model_NAME%Mapper {
+
+  /**
+   * Maps a buisness model into a DTO.
+   * The properties `lastModificationDate`, `lastModificationBy` and `softDeleted` are lost
+   * @param model the model to map into a DTO
+   */
+  static toDTO(model: %Model_NAME%): %Model_NAME%DTO {
+    return {
+      id: model.id,
+      creationDate: model.creationDate,
+    };
+  }
+
+  /**
+   * Maps a DTO into a model.
+   * The properties `lastModificationDate`, `lastModificationBy` and `softDeleted` properties are set to the value `undefined`
+   * @param dto the DTO to map into a model
+   */
+  static fromDTO(dto: %Model_NAME%DTO): %Model_NAME% {
+    return {
+      id: dto.id,
+      creationDate: dto.creationDate,
+      lastModificationDate: undefined,
+      lastModificationBy: undefined,
+      softDeleted: undefined,
+    };
+  }
+}
