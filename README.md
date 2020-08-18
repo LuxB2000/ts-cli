@@ -13,6 +13,17 @@ In your terminal run
 npm link
 ```
 
+### Example
+
+#### Back End
+
+```
+$ nestjs new dummy-nestjs
+$ cd dummy-nestjs
+$ npm install --save mongoose
+$ ts-cli
+```
+
 ## Help
 
 # Sources:

@@ -1,0 +1,29 @@
+import { %Model_NAME%DBO } from './%model_NAME%.schema';
+
+describe('%Model_NAME% Schema', () => {
+  it(`should be valid with all fields set`, async () => {
+    let error;
+    const dbo = new %Model_NAME%DBO({
+      creationDate: new Date(Date.now()),
+      lastModificationDate: new Date(Date.now()),
+      lastModificationBy: 'user1',
+    });
+    await dbo.validate().catch(err => error = err);
+    expect(error).toBeUndefined();
+  });
+  it(`should be not valid with an empty properties set`, async () => {
+    let error;
+    const dbo = new %Model_NAME%DBO({
+    });
+    await dbo.validate().catch(err => error = err);
+    expect(error).not.toBeUndefined();
+  });
+  it(`should be valid with an minimal properties set`, async () => {
+    let error;
+    const dbo = new %Model_NAME%DBO({
+      lastModificationBy: 'user',
+    });
+    await dbo.validate().catch(err => error = err);
+    expect(error).toBeUndefined();
+  });
+});

@@ -86,6 +86,9 @@ const run = async () => {
       const aBE = await inquirer.prompt(qBE);
       const _name = aBE.modelName.trim().toLowerCase();
       data.end.path = 'back-end';
+      data.database = {
+        name: 'mongodb',
+      };
       data.type = {
         name: aBE.type,
       };
@@ -126,6 +129,17 @@ const run = async () => {
           file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), `models`), `mock.data.txt`)).toString(),
           path: path.join(path.join($path, 'test'), 'data'),
           fileName: `${data.names.name}.mock.data.ts`,
+        });
+        // the schema and unit tests
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(path.join(templatePath, `${data.end.path}`), `models`), `${data.database.name}`), `schema.template.txt`)).toString(),
+          path: path.join($path, 'dbo'),
+          fileName: `${data.names.name}.schema.ts`,
+        });
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(path.join(templatePath, `${data.end.path}`), `models`), `${data.database.name}`), `schema.template.spec.txt`)).toString(),
+          path: path.join($path, 'dbo'),
+          fileName: `${data.names.name}.schema.spec.ts`,
         });
       }
     } else {
