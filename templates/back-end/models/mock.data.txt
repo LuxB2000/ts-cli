@@ -5,6 +5,7 @@
 
 import { %Model_NAME% } from '../../models/%model_NAME%.model';
 import { %Model_NAME%DTO, Paginated%Model_NAME%DTO } from '../../dto/%model_NAME%.dto';
+import { I%Model_NAME%DBO, %Model_NAME%DBO } from '../../dbo/actor.schema';
 
 export const MOCK_%MODEL_NAME%_MODELS: %Model_NAME%[] = [
   {
@@ -29,3 +30,13 @@ export const MOCK_PAGINATED_%MODEL_NAME%_DTO: Paginated%Model_NAME%DTO = {
   %model_NAME%s: [...MOCK_%MODEL_NAME%_DTOS],
   totalCount: 500,
 };
+
+export const MOCK_%MODEL_NAME%_DBOS: I%Model_NAME%DBO[] = [
+  new %Model_NAME%DBO({
+    creationDate: MOCK_%MODEL_NAME%_MODELS[0].creationDate,
+    lastModificationDate: MOCK_%MODEL_NAME%_MODELS[0].lastModificationDate,
+    lastModificationBy: MOCK_%MODEL_NAME%_MODELS[0].lastModificationBy,
+    softDeleted: MOCK_%MODEL_NAME%_MODELS[0].softDeleted,
+  }),
+];
+

@@ -5,6 +5,7 @@
 
 import { %Model_NAME% } from '../models/%model_NAME%.model';
 import { %Model_NAME%DTO } from '../dto/%model_NAME%.dto';
+import { I%Model_NAME%DBO, %Model_NAME%DBO } from '../dbo/%model_NAME%.schema';
 
 export class %Model_NAME%Mapper {
 
@@ -32,6 +33,34 @@ export class %Model_NAME%Mapper {
       lastModificationDate: undefined,
       lastModificationBy: undefined,
       softDeleted: undefined,
+    };
+  }
+
+  /**
+   * Maps a model into a DBO.
+   * No information is lost
+   * @param model the model containing all the informations to store in DB
+   */
+  static createDBO(model: %Model_NAME%): I%Model_NAME%DBO {
+    return new %Model_NAME%DBO({
+      creationDate: new Date(Date.now()),
+      lastModificationDate: new Date(Date.now()),
+      lastModificationBy: model.lastModificationBy,
+    });
+  }
+
+  /**
+   * Maps a DBO to a buisness model.
+   * The property`_id` is renamed `id`.
+   * @param dbo the DBO to map into a model
+   */
+  static fromDBO(dbo: I%Model_NAME%DBO): %Model_NAME% {
+    return {
+      id: dbo.id,
+      creationDate: dbo.creationDate,
+      lastModificationDate: dbo.lastModificationDate,
+      lastModificationBy: dbo.lastModificationBy,
+      softDeleted: dbo.softDeleted,
     };
   }
 }

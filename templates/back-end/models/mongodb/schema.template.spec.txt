@@ -1,3 +1,8 @@
+/**
+ * This file has been generated using TS-CLI.
+ * This file contains the Unit test relative the %Model_NAME% Schema.
+ */
+
 import { %Model_NAME%DBO } from './%model_NAME%.schema';
 
 describe('%Model_NAME% Schema', () => {

@@ -4,25 +4,47 @@
  */
 
 import { %Model_NAME%Mapper } from './%model_NAME%.mapper';
-import { MOCK_%MODEL_NAME%_DTOS, MOCK_%MODEL_NAME%_MODELS } from '../test/data/actor.mock.data';
+import { MOCK_%MODEL_NAME%_DTOS, MOCK_%MODEL_NAME%_MODELS, MOCK_%MODEL_NAME%_DBOS } from '../test/data/actor.mock.data';
+import { I%Model_NAME%DBO } from '../dbo/%model_NAME%.schema';
 
 describe('AlgorithmMapper', () => {
   describe('toDTO', () => {
     it(`should correctly map a model into a DTO`, () => {
       expect(%Model_NAME%Mapper.toDTO(MOCK_%MODEL_NAME%_MODELS[0])).toEqual({
-        id: 'abc1',
-        creationDate: new Date(1234567880),
+        id: MOCK_%MODEL_NAME%_DTOS[0].id,
+        creationDate: MOCK_%MODEL_NAME%_DTOS[0].creationDate,
       });
     });
   });
   describe('fromDTO', () => {
     it(`should correctly map a model into a DTO`, () => {
       expect(%Model_NAME%Mapper.fromDTO(MOCK_%MODEL_NAME%_DTOS[0])).toEqual({
-        id: 'abc1',
-        creationDate: new Date(1234567880),
+        id: MOCK_%MODEL_NAME%_DTOS[0].id,
+        creationDate: MOCK_%MODEL_NAME%_DTOS[0].creationDate,
         lastModificationDate: undefined,
         lastModificationBy: undefined,
-        deleted: undefined,
+        softDeleleted: undefined,
+      });
+    });
+  });
+  describe('createDBO', () => {
+    it(`should correctly map a model into a DBO`, () => {
+      jest.spyOn(Date, 'now').mockReturnValue(12345);
+      const dbo: I%Model_NAME%DBO = %Model_NAME%Mapper.createDBO(MOCK_%MODEL_NAME%_MODELS[0]);
+      expect(dbo.id).toBeDefined();
+      expect(dbo.lastModificationDate).toEqual(new Date(12345));
+      expect(dbo.lastModificationBy).toEqual(MOCK_%MODEL_NAME%_DBOS[0].lastModificationBy);
+      expect(dbo.creationDate).toEqual(new Date(12345));
+    });
+  });
+  describe('fromDBO', () => {
+    it(`should correcly map a DBO into a model`, () => {
+      expect(%Model_NAME%Mapper.fromDBO(MOCK_%MODEL_NAME%_DBOS[0])).toEqual({
+        id: MOCK_%MODEL_NAME%_DBOS[0].id,
+        lastModificationDate: MOCK_%MODEL_NAME%_DBOS[0].lastModificationDate,
+        creationDate: MOCK_%MODEL_NAME%_DBOS[0].creationDate,
+        lastModificationBy: MOCK_%MODEL_NAME%_DBOS[0].lastModificationBy,
+        softDeleted: MOCK_%MODEL_NAME%_DBOS[0].softDeleted,
       });
     });
   });

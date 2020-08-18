@@ -46,6 +46,7 @@ const qBE = [
     name: 'modelName',
     type: 'input',
     message: `What the name of the ressource?`,
+    default: 'actor',
     validate: (value) => {
       if (value.trim().length === 0) {
         return 'You need to specify a name for the ressource'
