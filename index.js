@@ -28,6 +28,7 @@ const qEnd = [
   },
 ];
 
+const availableTypes = ['service', 's', 'model', 'm'];
 const qBE = [
   {
     name: 'type',
@@ -35,10 +36,10 @@ const qBE = [
     message: `What type of file: 'model'`,
     default: 'model',
     validate: (value) => {
-      if (value === 'model') {
+      if (availableTypes.indexOf(value) !== -1) {
         return true;
       } else {
-        return `Possible choices are 'model'`;
+        return `Possible choices are 'model', 'service'`;
       }
     },
   },
@@ -102,7 +103,7 @@ const run = async () => {
         NAME: _name.toUpperCase(),
         NAMES: _name.toUpperCase() + 'S', 
       };
-      if (data.type.name === 'model') {
+      if (data.type.name === 'model' || data.type.name === 'm') {
         // the buisness model
         templates.push({
           file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), `models`), `model.buisness.template.txt`)).toString(),
@@ -118,12 +119,12 @@ const run = async () => {
         // the mapper files (class + unit tests + mock data files)
         templates.push({
           file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), `models`), `mapper.template.txt`)).toString(),
-          path: path.join($path, 'mapper'),
+          path: path.join($path, 'mappers'),
           fileName: `${data.names.name}.mapper.ts`,
         });
         templates.push({
           file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), `models`), `mapper.template.spec.txt`)).toString(),
-          path: path.join($path, 'mapper'),
+          path: path.join($path, 'mappers'),
           fileName: `${data.names.name}.mapper.spec.ts`,
         });
         templates.push({
@@ -142,6 +143,18 @@ const run = async () => {
           path: path.join($path, 'dbo'),
           fileName: `${data.names.name}.schema.spec.ts`,
         });
+      } else if (data.type.name === 'service' || data.type.name === 's') {
+        // the service and unit tests
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), `services`), `service.template.txt`)).toString(),
+          path: path.join($path, 'services'),
+          fileName: `${data.names.name}.service.ts`,
+        });
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), `services`), `service.template.spec.txt`)).toString(),
+          path: path.join($path, 'services'),
+          fileName: `${data.names.name}.service.spec.ts`,
+        });
       }
     } else {
       // Front End: Angular
@@ -150,6 +163,7 @@ const run = async () => {
     // console.log(templates);
 
     // files generation
+    console.log(`file generation ...`);
     for(const template of templates) {
       if ( !fs.existsSync(template.path) ) {
         fs.mkdirSync(template.path, { recursive: true });
@@ -163,6 +177,7 @@ const run = async () => {
       text = text.replace(/%MODELS_NAME%/g, data.names.NAMES);
       fs.writeFileSync(path.join(template.path, template.fileName), text);
     }
+    console.log(`... file generation done`);
   } catch (error) {
     console.log(chalk.red('Error during the process.'));
     console.log(error);

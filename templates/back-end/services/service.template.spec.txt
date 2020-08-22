@@ -1,0 +1,6 @@
+/**
+ * This file has been generated using TS-CLI.
+ * This file contains the unit tests relative to the %Models_NAME$Service
+ */
+
+import { %Model_NAME%Service } from './%Models_NAME%Service.service';

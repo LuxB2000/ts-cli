@@ -1,0 +1,58 @@
+/**
+ * This file has been generated using TS-CLI.
+ * This file contains the service to Create, Read, Update and Delete %Model_NAME% Objects.
+ */
+
+import { Injectable, Inject } from '@nestjs/common';
+import { Model } from 'mongoose';
+import { Observable, of, from } from 'rxjs';
+import { switchMap, mergeMap, map, toArray } from 'rxjs/operators';
+import { %Model_NAME% } from '../models/%model_NAME%.model';
+import { I%Model_NAME%DBO } from '../dbo/%model_NAME%.schema';
+import { %Model_NAME%Mapper } from '../mappers/%model_NAME%.mapper';
+
+@Injectable()
+export class %Models_NAME%Service {
+
+  constructor(
+    @Inject('%MODEL_NAME%_MODEL') private %model_NAME%Model: Model<I%Model_NAME%DBO>,
+    private %model_NAME%Mapper: %Model_NAME%Mapper,
+  ) {
+
+  }
+
+  /**
+   * Create a %Model_NAME% Object in the database
+   * @param data information to record in the database
+   */
+  public create(user: string): Observable<%Model_NAME%> {
+    return of(%Model_NAME%Mapper.createDBO({
+      id: undefined,
+      softDeleted: false,
+      creationDate: undefined,
+      lastModificationDate: undefined,
+      lastModificationBy: user, 
+    })).pipe(
+      switchMap((%model_NAME%: I%Model_NAME%DBO) => of(%Model_NAME%Mapper.fromDBO(%model_NAME%))));
+  }
+
+  /**
+   * Get a %Model_NAME% Object based on its UID
+   * @param id the UID of the Object
+   */
+  public getById(data: I%Model_NAME%DBO): Observable<%Model_NAME%> {
+    return of(undefined);
+  }
+
+  /**
+   * Get all the %Model_NAME% considering a pagintation
+   */
+  public getAll(): Observable<%Model_NAME%[]> {
+    return from(this.%model_NAME%Model.find().exec()).pipe(
+      mergeMap((%model_NAME%: I%Model_NAME%DBO[]) => %model_NAME%),
+      map((dbo: I%Model_NAME%DBO) => %Model_NAME%Mapper.fromDBO(dbo)),
+      toArray(),
+    );
+  }
+
+}
