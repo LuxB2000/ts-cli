@@ -1,0 +1,22 @@
+/**
+ * This file has been generated using TS-CLI.
+ */
+
+import { Controller, Get } from '@nestjs/common';
+import { Observable } from 'rxjs'
+import { %Models_NAME%Service } from '../services/%model_NAME%.service';
+import { %Model_NAME% } from 'src/models/%model_NAME%.model';
+
+@Controller('%model_Name%')
+export class CatsController {
+
+  constructor(
+    private readonly %models_NAME%Service: %Models_NAME%Service,
+  ) {
+  }
+
+  @Get()
+  getAll(): Observable<%Model_NAME%[]> {
+    return this.%models_NAME%Service.getAll();
+  }
+}

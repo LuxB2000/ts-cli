@@ -28,7 +28,7 @@ const qEnd = [
   },
 ];
 
-const availableTypes = ['service', 's', 'model', 'm'];
+const availableTypes = ['service', 's', 'model', 'm', 'controller', 'c'];
 const qBE = [
   {
     name: 'type',
@@ -154,6 +154,18 @@ const run = async () => {
           file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), `services`), `service.template.spec.txt`)).toString(),
           path: path.join($path, 'services'),
           fileName: `${data.names.name}.service.spec.ts`,
+        });
+      } else if (data.type.name === 'controller' || data.type.name === 'c') {
+        // the service and unit tests
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), `controllers`), `controller.template.txt`)).toString(),
+          path: path.join($path, 'controllers'),
+          fileName: `${data.names.name}.controller.ts`,
+        });
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), `controllers`), `controller.template.spec.txt`)).toString(),
+          path: path.join($path, 'controllers'),
+          fileName: `${data.names.name}.controller.spec.ts`,
         });
       }
     } else {
