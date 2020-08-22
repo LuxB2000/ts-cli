@@ -27,7 +27,7 @@ export const MOCK_%MODEL_NAME%_DTOS: %Model_NAME%DTO[] = [
 export const MOCK_PAGINATED_%MODEL_NAME%_DTO: Paginated%Model_NAME%DTO = {
   pageIndex: 2,
   pageSize: MOCK_%MODEL_NAME%_DTOS.length,
-  %model_NAME%s: [...MOCK_%MODEL_NAME%_DTOS],
+  %model_NAME%s: [...MOCK_%MODEL_NAME%_MODELS],
   totalCount: 500,
 };
 

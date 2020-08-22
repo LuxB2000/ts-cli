@@ -175,7 +175,7 @@ const run = async () => {
     // console.log(templates);
 
     // files generation
-    console.log(`file generation ...`);
+    console.log(`files generation ...`);
     for(const template of templates) {
       if ( !fs.existsSync(template.path) ) {
         fs.mkdirSync(template.path, { recursive: true });
@@ -189,7 +189,7 @@ const run = async () => {
       text = text.replace(/%MODELS_NAME%/g, data.names.NAMES);
       fs.writeFileSync(path.join(template.path, template.fileName), text);
     }
-    console.log(`... file generation done`);
+    console.log(`... files generation done`);
   } catch (error) {
     console.log(chalk.red('Error during the process.'));
     console.log(error);

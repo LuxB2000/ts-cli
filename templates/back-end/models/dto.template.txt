@@ -4,7 +4,7 @@
  * The default properties are id and creationDate.
  */
 
- import { %Model_NAME% } from "models/%model_NAME%.model";
+ import { %Model_NAME% } from "../models/%model_NAME%.model";
 
 export interface %Model_NAME%DTO {
   id: string;
