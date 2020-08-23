@@ -1,0 +1,15 @@
+/**
+ * This file has been generated using TS-CLI.
+ * It contains a provider to inject to the appModule
+ */
+
+import { Connection, Model } from 'mongoose';
+import { %Model_NAME%Schema, I%Model_NAME%DBO } from '../dbo/%model_NAME%.schema';
+
+export const %Models_NAME%Providers = [
+  {
+    provide: '%MODEL_NAME%_MODEL',
+    useFactory: (connection: Connection): Model<IActorDBO> => connection.model<IActorDBO>('%Model_NAME%', %Model_NAME%Schema),
+    inject: ['DATABASE_CONNECTION'],
+  },
+];

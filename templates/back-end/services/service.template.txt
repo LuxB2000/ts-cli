@@ -16,7 +16,6 @@ export class %Models_NAME%Service {
 
   constructor(
     @Inject('%MODEL_NAME%_MODEL') private %model_NAME%Model: Model<I%Model_NAME%DBO>,
-    private %model_NAME%Mapper: %Model_NAME%Mapper,
   ) {
 
   }

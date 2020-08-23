@@ -74,6 +74,7 @@ const run = async () => {
   
   try {
     let data = {};
+    let generateDatabaseProvider = false;
     const aGeneral = await inquirer.prompt(qGeneral);
     const $path = path.join(PATH, aGeneral.path);
     console.log(`path: ${$path}`);
@@ -90,6 +91,7 @@ const run = async () => {
       data.end.path = 'back-end';
       data.database = {
         name: 'mongodb',
+        dbName: 'myproject', // @TODO find better name 
       };
       data.type = {
         name: aBE.type,
@@ -143,6 +145,21 @@ const run = async () => {
           path: path.join($path, 'dbo'),
           fileName: `${data.names.name}.schema.spec.ts`,
         });
+        // the provider to inject in appModule
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(path.join(templatePath, `${data.end.path}`), `models`), `${data.database.name}`), `model.provider.template.txt`)).toString(),
+          path: path.join($path, 'providers'),
+          fileName: `${data.names.names}.providers.ts`,
+        });
+        // if database provider does not exist, creates it
+        if (!fs.existsSync(path.join(path.join($path, 'providers'), 'database.provider.ts'))) {
+          templates.push({
+            file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), `providers`), `database.provider.template.txt`)).toString(),
+            path: path.join($path, 'providers'),
+            fileName: `database.providers.ts`,
+          });
+          generateDatabaseProvider = true;
+        }
       } else if (data.type.name === 'service' || data.type.name === 's') {
         // the service and unit tests
         templates.push({
@@ -187,6 +204,7 @@ const run = async () => {
       text = text.replace(/%Models_NAME%/g, data.names.Names);
       text = text.replace(/%MODEL_NAME%/g, data.names.NAME);
       text = text.replace(/%MODELS_NAME%/g, data.names.NAMES);
+      text = text.replace(/%DATABASE_NAME%/g, data.database.dbName);
       fs.writeFileSync(path.join(template.path, template.fileName), text);
     }
     console.log(`... files generation done`);
@@ -196,7 +214,15 @@ const run = async () => {
     const appModule = fs.readFileSync(path.join($path, 'app.module.ts')).toString();
     let strToAddImport;
     let strToAddDependencies;
-    if (data.type.name === 'service' || data.type.name === 's') {
+    if (data.type.name === 'model' || data.type.name === 'm') {
+      strToFind = `providers: [`;
+      strToAddImport =`\n\t\t... ${data.names.Names}Providers,`;
+      strToAddDependencies = `import { ${data.names.Names}Providers } from './providers/${data.names.names}.providers';\n`;
+      if (generateDatabaseProvider) {
+        strToAddImport = `\n\t\t... databaseProviders,` + strToAddImport;
+        strToAddDependencies = `import { databaseProviders } from './providers/database.providers';\n` + strToAddDependencies;
+      }
+    } else if (data.type.name === 'service' || data.type.name === 's') {
       strToFind = `providers: [`;
       strToAddImport =`\n\t\t${data.names.Names}Service,\n`;
       strToAddDependencies = `import { ${data.names.Names}Service } from './services/${data.names.name}.service';\n`;
