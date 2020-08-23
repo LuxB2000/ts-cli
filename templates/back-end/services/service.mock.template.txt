@@ -1,0 +1,21 @@
+/**
+ * This file has been generated using TS-CLI.
+ * This file contains the mock of the %Model_NAME%Service, this can be used in the Controller Unit Test
+ */
+
+import { %Model_NAME% } from "src/models/%model_NAME%.model";
+
+export class %Models_NAME%ServiceStub {
+
+  getAll(): %Model_NAME%[] {
+    return [];
+  }
+  
+  getById(): %Model_NAME% {
+    return undefined;
+  }
+
+  create(): %Model_NAME% {
+    return undefined;
+  }
+}

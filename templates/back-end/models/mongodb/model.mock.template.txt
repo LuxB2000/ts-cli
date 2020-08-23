@@ -1,0 +1,41 @@
+/**
+ * This file has been generated using TS-CLI.
+ * IT contains the %Model_NAME% Model mock that can be injected in the %Model_NAME%Service Unit test. 
+ */
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import { MOCK_%MODEL_NAME%_DBOS } from '../data/%model_NAME%.mock.data';
+
+// Mock the Mongo Database
+// tslint:disable: no-empty
+export class %Model_NAME%MongoMock {
+  find(opts): any {
+    return Promise.resolve(MOCK_%MODEL_NAME%_DBOS);
+  }
+  findOne(id): any {
+    return Promise.resolve(MOCK_%MODEL_NAME%_DBOS[0]);
+  }
+  create(model): any {
+    return Promise.resolve(MOCK_%MODEL_NAME%_DBOS[1]);
+  }
+  findOneAndUpdate(model): any {
+    return Promise.resolve(MOCK_%MODEL_NAME%_DBOS[0]);
+  }
+  sort(column?): any {}
+
+  limit(amount?): any {}
+
+  skip(amount?): any {}
+
+  countDocuments(): any {
+    return Promise.resolve(40);
+  }
+  deleteOne(opts?): any {
+    return Promise.resolve({
+      n: 1,
+      ok: 1,
+      deletedCount: 1,
+    });
+  }
+}

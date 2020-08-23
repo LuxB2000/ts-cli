@@ -160,6 +160,12 @@ const run = async () => {
           });
           generateDatabaseProvider = true;
         }
+        // generate the mock of the model for service unit test
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(path.join(templatePath, `${data.end.path}`), `models`), `${data.database.name}`), `model.mock.template.txt`)).toString(),
+          path: path.join($path, 'test/mock'),
+          fileName: `${data.names.name}.mock.model.ts`,
+        });
       } else if (data.type.name === 'service' || data.type.name === 's') {
         // the service and unit tests
         templates.push({
@@ -172,6 +178,13 @@ const run = async () => {
           path: path.join($path, 'services'),
           fileName: `${data.names.name}.service.spec.ts`,
         });
+        // generate the mock of the service for controller unit test
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), `services`), `service.mock.template.txt`)).toString(),
+          path: path.join($path, 'test/mock'),
+          fileName: `${data.names.name}.mock.service.ts`,
+        });
+        
       } else if (data.type.name === 'controller' || data.type.name === 'c') {
         // the service and unit tests
         templates.push({
@@ -224,27 +237,32 @@ const run = async () => {
       }
     } else if (data.type.name === 'service' || data.type.name === 's') {
       strToFind = `providers: [`;
-      strToAddImport =`\n\t\t${data.names.Names}Service,\n`;
+      strToAddImport =`\n\t\t${data.names.Names}Service,`;
       strToAddDependencies = `import { ${data.names.Names}Service } from './services/${data.names.name}.service';\n`;
     } else if (data.type.name === 'controller' || data.type.name === 'c') {
       strToFind = `controllers: [`;
-      strToAddImport =`\n\t\t${data.names.Names}Controller,\n`;
+      strToAddImport =`\n\t\t${data.names.Names}Controller,`;
       strToAddDependencies = `import { ${data.names.Names}Controller } from './controllers/${data.names.name}.controller';\n`;
     }
     const index = appModule.indexOf(strToFind);
     if (index >= 0) {
       // modify the file
       // add new element to module
-      let newAppModule = appModule.slice(0, index + strToFind.length) +
-        strToAddImport +
-        appModule.slice(index + strToFind.length, appModule.length);
+      let newAppModule = appModule;
+      if (newAppModule.indexOf(strToAddImport.trim()) === -1) {
+        newAppModule = appModule.slice(0, index + strToFind.length) +
+          strToAddImport +
+          appModule.slice(index + strToFind.length, appModule.length);
+      }
       // add the dependencies
       // look for the last import line
       let indexImport = newAppModule.lastIndexOf('import {');
       indexImport = newAppModule.indexOf('\n', indexImport);
-      newAppModule = newAppModule.slice(0, indexImport + 1) + 
-        strToAddDependencies +
-        newAppModule.slice(indexImport, newAppModule.length);
+      if (newAppModule.indexOf(strToAddDependencies.trim()) === -1) {
+        newAppModule = newAppModule.slice(0, indexImport + 1) + 
+          strToAddDependencies +
+          newAppModule.slice(indexImport, newAppModule.length);
+      }
       // write the new file
       fs.writeFileSync(path.join($path, 'app.module.ts'), newAppModule);
     }

@@ -3,4 +3,28 @@
  * This file contains the unit tests relative to the %Models_NAME$Service
  */
 
-import { %Model_NAME%Service } from './%Models_NAME%Service.service';
+import { Test, TestingModule } from '@nestjs/testing';
+import { %Models_NAME%Service } from './%model_NAME%.service';
+import { %Model_NAME%MongoMock } from '../../src/test/mock/%model_NAME%.mock.model';
+
+describe('%Models_NAME%Service', () => {
+  let service: %Models_NAME%Service;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        %Models_NAME%Service,
+        {provide: '%MODEL_NAME%_MODEL', useValue: %Model_NAME%MongoMock},
+      ],
+    }).compile();
+
+    service = module.get<%Models_NAME%Service>(%Models_NAME%Service);
+  });
+
+  describe('constructor', () => {
+    it('should be defined', () => {
+      expect(service).toBeDefined();
+    });
+  });
+
+});

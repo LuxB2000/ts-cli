@@ -32,6 +32,10 @@ export class %Models_NAME%Service {
       lastModificationDate: undefined,
       lastModificationBy: user, 
     })).pipe(
+      switchMap((%model_NAME%: I%Model_NAME%DBO) => {
+        %model_NAME%.save();
+        return of(%model_NAME%);
+      }),
       switchMap((%model_NAME%: I%Model_NAME%DBO) => of(%Model_NAME%Mapper.fromDBO(%model_NAME%))));
   }
 

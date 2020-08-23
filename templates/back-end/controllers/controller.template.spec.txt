@@ -1,0 +1,32 @@
+/**
+ *
+ */
+
+import { Test, TestingModule } from '@nestjs/testing';
+import { %Models_NAME%Controller } from './%model_NAME%.controller';
+import { %Models_NAME%Service } from '../services/%model_NAME%.service';
+import { %Models_NAME%ServiceStub } from '../test/mock/%model_NAME%.mock.service';
+
+describe('%Models_NAME% Controller', () => {
+  let controller: %Models_NAME%Controller;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [
+        %Models_NAME%Controller,
+      ],
+      providers: [
+        {provide: %Models_NAME%Service, useClass: %Models_NAME%ServiceStub},
+      ]
+    }).compile();
+
+    controller = module.get<%Models_NAME%Controller>(%Models_NAME%Controller);
+  });
+
+  describe('constructor', () => {
+    it('should be defined', () => {
+      expect(controller).toBeDefined();
+    });
+  });
+ 
+});
