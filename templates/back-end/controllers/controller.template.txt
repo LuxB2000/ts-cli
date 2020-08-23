@@ -2,7 +2,7 @@
  * This file has been generated using TS-CLI.
  */
 
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Post } from '@nestjs/common';
 import { Observable } from 'rxjs'
 import { %Models_NAME%Service } from '../services/%model_NAME%.service';
 import { %Model_NAME% } from 'src/models/%model_NAME%.model';
@@ -18,5 +18,10 @@ export class %Models_NAME%Controller {
   @Get()
   getAll(): Observable<%Model_NAME%[]> {
     return this.%models_NAME%Service.getAll();
+  }
+
+  @Post()
+  create(): Observable<%Model_NAME%> {
+    return this.%models_NAME%Service.create('user1'); // @TODO Here we need to set up our user loggin system
   }
 }
