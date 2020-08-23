@@ -3,7 +3,7 @@
  * This file contains the mock of the %Model_NAME%Service, this can be used in the Controller Unit Test
  */
 
-import { %Model_NAME% } from "src/models/%model_NAME%.model";
+import { %Model_NAME% } from "../../models/%model_NAME%.model";
 
 export class %Models_NAME%ServiceStub {
 

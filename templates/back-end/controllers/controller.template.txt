@@ -5,7 +5,7 @@
 import { Controller, Get, Post } from '@nestjs/common';
 import { Observable } from 'rxjs'
 import { %Models_NAME%Service } from '../services/%model_NAME%.service';
-import { %Model_NAME% } from 'src/models/%model_NAME%.model';
+import { %Model_NAME% } from '../models/%model_NAME%.model';
 
 @Controller('api/%model_NAME%')
 export class %Models_NAME%Controller {

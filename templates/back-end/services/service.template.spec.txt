@@ -5,7 +5,7 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { %Models_NAME%Service } from './%model_NAME%.service';
-import { %Model_NAME%MongoMock } from '../../src/test/mock/%model_NAME%.mock.model';
+import { %Model_NAME%MongoMock } from '../test/mock/%model_NAME%.mock.model';
 
 describe('%Models_NAME%Service', () => {
   let service: %Models_NAME%Service;
@@ -24,6 +24,26 @@ describe('%Models_NAME%Service', () => {
   describe('constructor', () => {
     it('should be defined', () => {
       expect(service).toBeDefined();
+    });
+  });
+
+  describe('create', () => {
+    it('should call %Model_NAME%Mapper.createDBO with expected input', async() => {
+      let error;
+      let response;
+      const user = 'User1';
+      await service.create(user).subscribe(
+        res => response = res,
+        err => error = err,
+      );
+      expect(error).toBeUndefined();
+      expect(response).not.toBeUndefined();
+    });
+    it('should call the Model.save() function', async() => {
+
+    });
+    it('should call %Model_NAME%Mapper.fromDBO', async() => {
+
     });
   });
 
