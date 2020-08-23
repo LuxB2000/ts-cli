@@ -198,11 +198,11 @@ const run = async () => {
     let strToAddDependencies;
     if (data.type.name === 'service' || data.type.name === 's') {
       strToFind = `providers: [`;
-      strToAddImport =`\n\t${data.names.Names}Service,\n`;
+      strToAddImport =`\n\t\t${data.names.Names}Service,\n`;
       strToAddDependencies = `import { ${data.names.Names}Service } from './services/${data.names.name}.service';\n`;
     } else if (data.type.name === 'controller' || data.type.name === 'c') {
       strToFind = `controllers: [`;
-      strToAddImport =`\n\t${data.names.Names}Controller,\n`;
+      strToAddImport =`\n\t\t${data.names.Names}Controller,\n`;
       strToAddDependencies = `import { ${data.names.Names}Controller } from './controllers/${data.names.name}.controller';\n`;
     }
     const index = appModule.indexOf(strToFind);
