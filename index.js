@@ -192,27 +192,35 @@ const run = async () => {
     console.log(`... files generation done`);
     console.log(`appModule modifications ...`);
     // add the dependencies to the App module
+    let strToFind;
+    const appModule = fs.readFileSync(path.join($path, 'app.module.ts')).toString();
+    let strToAddImport;
+    let strToAddDependencies;
     if (data.type.name === 'service' || data.type.name === 's') {
-      const appModule = fs.readFileSync(path.join($path, 'app.module.ts')).toString();
-      // find the provider line
-      const strToFind = `providers: [`;
-      const index = appModule.indexOf(strToFind);
-      if (index >= 0) {
-        // modify the file
-        // add service to module
-        let newAppModule = appModule.slice(0, index + strToFind.length) +
-          `${data.names.Names}Service,\n` +
-          appModule.slice(index + strToFind.length, appModule.length);
-        // add the dependencies
-        // look for the last import line
-        let indexImport = newAppModule.lastIndexOf('import {');
-        indexImport = newAppModule.indexOf('\n', indexImport);
-        newAppModule = newAppModule.slice(0, indexImport + 1) + 
-          `import { ${data.names.Names}Service } from './services/${data.names.name}.service';\n` +
-          newAppModule.slice(indexImport, newAppModule.length);
-        // write the new file
-        fs.writeFileSync(path.join($path, 'app.module.ts'), newAppModule);
-      }
+      strToFind = `providers: [`;
+      strToAddImport =`\n\t${data.names.Names}Service,\n`;
+      strToAddDependencies = `import { ${data.names.Names}Service } from './services/${data.names.name}.service';\n`;
+    } else if (data.type.name === 'controller' || data.type.name === 'c') {
+      strToFind = `controllers: [`;
+      strToAddImport =`\n\t${data.names.Names}Controller,\n`;
+      strToAddDependencies = `import { ${data.names.Names}Controller } from './controllers/${data.names.name}.controller';\n`;
+    }
+    const index = appModule.indexOf(strToFind);
+    if (index >= 0) {
+      // modify the file
+      // add new element to module
+      let newAppModule = appModule.slice(0, index + strToFind.length) +
+        strToAddImport +
+        appModule.slice(index + strToFind.length, appModule.length);
+      // add the dependencies
+      // look for the last import line
+      let indexImport = newAppModule.lastIndexOf('import {');
+      indexImport = newAppModule.indexOf('\n', indexImport);
+      newAppModule = newAppModule.slice(0, indexImport + 1) + 
+        strToAddDependencies +
+        newAppModule.slice(indexImport, newAppModule.length);
+      // write the new file
+      fs.writeFileSync(path.join($path, 'app.module.ts'), newAppModule);
     }
     console.log(`... appModule modifications done`);
   } catch (error) {

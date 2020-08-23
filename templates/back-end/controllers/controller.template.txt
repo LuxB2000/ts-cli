@@ -8,7 +8,7 @@ import { %Models_NAME%Service } from '../services/%model_NAME%.service';
 import { %Model_NAME% } from 'src/models/%model_NAME%.model';
 
 @Controller('%model_NAME%')
-export class CatsController {
+export class %Models_NAME%Controller {
 
   constructor(
     private readonly %models_NAME%Service: %Models_NAME%Service,
