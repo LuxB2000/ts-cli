@@ -62,7 +62,8 @@ let PATH = process.env.CLIPATH || process.cwd();
 /**
  * DEBUG
  */
-PATH += '..\\..\\test\\dummy-nestjs\\src';
+// PATH += '..\\..\\test\\dummy-nestjs\\src';
+PATH = '/Users/plumat/Workspace/test/dummy-nestjs/src';
 /**
  * // DEBUG
  */
@@ -76,7 +77,7 @@ const run = async () => {
     let data = {};
     let generateDatabaseProvider = false;
     const aGeneral = await inquirer.prompt(qGeneral);
-    const $path = path.join(PATH, aGeneral.path);
+    const $path = PATH; // path.join(PATH, aGeneral.path);
     console.log(`path: ${$path}`);
     const aEnd = await inquirer.prompt(qEnd);
     data.end = {

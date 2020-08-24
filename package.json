@@ -7,6 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index"
   },
+  "bin": {
+    "tscli": "./index.js"
+  },
   "repository": {
     "type": "git",
     "url": "\u0016https://github.com/LuxB2000/ts-cli.git"

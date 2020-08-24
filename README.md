@@ -1,11 +1,13 @@
 
-# ts-cli
+# TS-CLI
 
 A simple CLI tools to generate files in typescript both Back end (with NestJS) and Front End (with Angular).
 
-## Install
+Using this CLI you can generate files containning code ready to run and ready to be unit tested.
 
-### Make it global
+You can generate models, services and controllers. Each comes with a class (added to the module when necessary), one or more unit tests files and mocks.
+
+## Install
 
 In your terminal run
 
@@ -13,9 +15,9 @@ In your terminal run
 npm link
 ```
 
-### Example
+## Example
 
-#### Back End
+### Back End
 
 ```
 $ nestjs new dummy-nestjs
@@ -26,8 +28,10 @@ $ ts-cli
 $ npm run test:watch
 ```
 
+You can now access the TS-CLI from anywhere on your station.
+
 ## Help
 
-# Sources:
+# Sources
 
 - https://www.sitepoint.com/javascript-command-line-interface-cli-node-js/

@@ -27,7 +27,7 @@ export const %Model_NAME%Schema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  sofDeleted: {
+  softDeleted: {
     type: Boolean,
     required: true,
     default: false,

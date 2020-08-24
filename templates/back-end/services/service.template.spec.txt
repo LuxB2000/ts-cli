@@ -4,8 +4,11 @@
  */
 
 import { Test, TestingModule } from '@nestjs/testing';
+import { Model } from 'mongoose';
 import { %Models_NAME%Service } from './%model_NAME%.service';
 import { %Model_NAME%MongoMock } from '../test/mock/%model_NAME%.mock.model';
+import { %Model_NAME%Mapper } from '../mappers/%model_NAME%.mapper';
+import { MOCK_%MODEL_NAME%_DBOS, MOCK_%MODEL_NAME%_MODELS } from '../test/data/%model_NAME%.mock.data';
 
 describe('%Models_NAME%Service', () => {
   let service: %Models_NAME%Service;
@@ -28,22 +31,49 @@ describe('%Models_NAME%Service', () => {
   });
 
   describe('create', () => {
+    const user = 'User1';
     it('should call %Model_NAME%Mapper.createDBO with expected input', async() => {
       let error;
       let response;
-      const user = 'User1';
+      const spy = jest.spyOn(%Model_NAME%Mapper, 'createDBO').mockReturnValue(MOCK_%MODEL_NAME%_DBOS[0]);
       await service.create(user).subscribe(
         res => response = res,
         err => error = err,
       );
       expect(error).toBeUndefined();
       expect(response).not.toBeUndefined();
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith({
+        creationDate: undefined,
+        id: undefined,
+        lastModificationBy: user,
+        lastModificationDate: undefined,
+        softDeleted: false,
+      });
     });
     it('should call the Model.save() function', async() => {
-
+      let error;
+      let response;
+      const spy = jest.spyOn(Model.prototype, 'save').mockReturnThis();
+      await service.create(user).subscribe(
+        res => response = res,
+        err => error = err,
+      );
+      expect(error).toBeUndefined();
+      expect(response).not.toBeUndefined();
+      expect(spy).toHaveBeenCalledTimes(1);
     });
     it('should call %Model_NAME%Mapper.fromDBO', async() => {
-
+      let error;
+      let response;
+      const spy = jest.spyOn(%Model_NAME%Mapper, 'fromDBO').mockReturnValue(MOCK_%MODEL_NAME%_MODELS[0]);
+      await service.create(user).subscribe(
+        res => response = res,
+        err => error = err,
+      );
+      expect(error).toBeUndefined();
+      expect(response).not.toBeUndefined();
+      expect(spy).toHaveBeenCalledTimes(1);
     });
   });
 
