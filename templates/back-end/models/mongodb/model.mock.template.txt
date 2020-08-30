@@ -38,4 +38,7 @@ export class %Model_NAME%MongoMock {
       deletedCount: 1,
     });
   }
+  exec(): any {
+    
+  }
 }

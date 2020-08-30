@@ -5,6 +5,7 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { Model } from 'mongoose';
+import { of } from 'rxjs';
 import { %Models_NAME%Service } from './%model_NAME%.service';
 import { %Model_NAME%MongoMock } from '../test/mock/%model_NAME%.mock.model';
 import { %Model_NAME%Mapper } from '../mappers/%model_NAME%.mapper';
@@ -17,7 +18,7 @@ describe('%Models_NAME%Service', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         %Models_NAME%Service,
-        {provide: '%MODEL_NAME%_MODEL', useValue: %Model_NAME%MongoMock},
+        {provide: '%MODEL_NAME%_MODEL', useClass: %Model_NAME%MongoMock},
       ],
     }).compile();
 
@@ -77,4 +78,39 @@ describe('%Models_NAME%Service', () => {
     });
   });
 
+  describe('getAll', () => {
+    it(`should call Model.find().exec()`, async () => {
+      let error;
+      let response;
+      const spyFind = jest.spyOn(%Model_NAME%MongoMock.prototype, 'find').mockReturnThis();
+      const spyExec = jest.spyOn(%Model_NAME%MongoMock.prototype, 'exec').mockReturnValue(of(MOCK_%MODEL_NAME%_DBOS));
+      await service.getAll().subscribe(
+        res => response = res,
+        err => error = err,
+      );
+      expect(error).toBeUndefined();
+      expect(response).not.toBeUndefined();
+      expect(spyFind).toHaveBeenCalledTimes(1);
+      expect(spyFind).toHaveBeenCalledWith();
+      expect(spyExec).toHaveBeenCalledTimes(1);
+    });
+    it(`should call %Model_NAME%Mapper.fromDBO`, async () => {
+      let error;
+      let response;
+      jest.spyOn(%Model_NAME%MongoMock.prototype, 'find').mockReturnThis();
+      jest.spyOn(%Model_NAME%MongoMock.prototype, 'exec').mockReturnValue(of(MOCK_%MODEL_NAME%_DBOS));
+      const spy = jest.spyOn(%Model_NAME%Mapper, 'fromDBO').mockReturnValue(MOCK_%MODEL_NAME%_MODELS[0]);
+      await service.getAll().subscribe(
+        res => response = res,
+        err => error = err,
+      );
+      expect(error).toBeUndefined();
+      expect(response).not.toBeUndefined();
+      expect(spy).toHaveBeenCalled(); // why is this function called 3x?
+    });
+  });
+
+  describe('getById', () => {
+    it(``, async () => {});
+  });
 });

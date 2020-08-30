@@ -43,15 +43,17 @@ export class %Models_NAME%Service {
    * Get a %Model_NAME% Object based on its UID
    * @param id the UID of the Object
    */
-  public getById(data: I%Model_NAME%DBO): Observable<%Model_NAME%> {
-    return of(undefined);
+  public getById(id: String): Observable<%Model_NAME%> {
+    return from(this.%model_NAME%Model.findOne({ id }).exec()).pipe(
+      map((dbo: I%Model_NAME%DBO) => %Model_NAME%Mapper.fromDBO(dbo)),
+    );
   }
 
   /**
    * Get all the %Model_NAME% considering a pagintation
    */
   public getAll(): Observable<%Model_NAME%[]> {
-    return from(this.%model_NAME%Model.find().exec()).pipe(
+    return from(this.%model_NAME%Model.findOne().exec()).pipe(
       mergeMap((%model_NAME%: I%Model_NAME%DBO[]) => %model_NAME%),
       map((dbo: I%Model_NAME%DBO) => %Model_NAME%Mapper.fromDBO(dbo)),
       toArray(),
