@@ -5,8 +5,9 @@
 
 import { Injectable, Inject } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { Observable, of, from } from 'rxjs';
-import { switchMap, mergeMap, map, toArray } from 'rxjs/operators';
+import { InjectModel } from '@nestjs/mongoose';
+import { Observable, of, from, throwError } from 'rxjs';
+import { switchMap, mergeMap, concatMap, map, toArray } from 'rxjs/operators';
 import { %Model_NAME% } from '../models/%model_NAME%.model';
 import { I%Model_NAME%DBO } from '../dbo/%model_NAME%.schema';
 import { %Model_NAME%Mapper } from '../mappers/%model_NAME%.mapper';
@@ -15,7 +16,7 @@ import { %Model_NAME%Mapper } from '../mappers/%model_NAME%.mapper';
 export class %Models_NAME%Service {
 
   constructor(
-    @Inject('%MODEL_NAME%_MODEL') private %model_NAME%Model: Model<I%Model_NAME%DBO>,
+    @InjectModel('%MODEL_NAME%_MODEL') private %model_NAME%Model: Model<I%Model_NAME%DBO>,
   ) {
 
   }
@@ -43,21 +44,28 @@ export class %Models_NAME%Service {
    * Get a %Model_NAME% Object based on its UID
    * @param id the UID of the Object
    */
-  public getById(id: String): Observable<%Model_NAME%> {
-    return from(this.%model_NAME%Model.findOne({ id }).exec()).pipe(
-      map((dbo: I%Model_NAME%DBO) => %Model_NAME%Mapper.fromDBO(dbo)),
+  public getById(id: string): Observable<%Model_NAME%> {
+    return from(this.%model_NAME%Model.findOne({ id })).pipe(
+      switchMap((dbo: I%Model_NAME%DBO) => {
+        if (dbo === null) {
+          return throwError(new Error(`No %model_NAME% with id ${id} was found`));
+        }
+        return of(%Model_NAME%Mapper.fromDBO(dbo));
+      }),
     );
   }
 
   /**
    * Get all the %Model_NAME% considering a pagintation
    */
+  /*
   public getAll(): Observable<%Model_NAME%[]> {
     return from(this.%model_NAME%Model.findOne().exec()).pipe(
-      mergeMap((%model_NAME%: I%Model_NAME%DBO[]) => %model_NAME%),
+      concatMap((%model_NAME%: I%Model_NAME%DBO) => of(%model_NAME%)),
       map((dbo: I%Model_NAME%DBO) => %Model_NAME%Mapper.fromDBO(dbo)),
       toArray(),
     );
   }
+  */
 
 }
