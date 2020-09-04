@@ -7,7 +7,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Observable, of, from, throwError } from 'rxjs';
-import { switchMap, mergeMap, concatMap, map, toArray } from 'rxjs/operators';
+import { switchMap, mergeMap, concatMap, map, toArray, catchError } from 'rxjs/operators';
 import { %Model_NAME% } from '../models/%model_NAME%.model';
 import { I%Model_NAME%DBO } from '../dbo/%model_NAME%.schema';
 import { %Model_NAME%Mapper } from '../mappers/%model_NAME%.mapper';
@@ -45,12 +45,16 @@ export class %Models_NAME%Service {
    * @param id the UID of the Object
    */
   public getById(id: string): Observable<%Model_NAME%> {
-    return from(this.%model_NAME%Model.findOne({ id })).pipe(
+    return from(this.%model_NAME%Model.findOne({ _id: id })).pipe(
       switchMap((dbo: I%Model_NAME%DBO) => {
         if (dbo === null) {
           return throwError(new Error(`No %model_NAME% with id ${id} was found`));
         }
         return of(%Model_NAME%Mapper.fromDBO(dbo));
+      }),
+      catchError(err => {
+        // @TODO log error
+        return throwError(err);
       }),
     );
   }
@@ -58,14 +62,15 @@ export class %Models_NAME%Service {
   /**
    * Get all the %Model_NAME% considering a pagintation
    */
-  /*
   public getAll(): Observable<%Model_NAME%[]> {
-    return from(this.%model_NAME%Model.findOne().exec()).pipe(
-      concatMap((%model_NAME%: I%Model_NAME%DBO) => of(%model_NAME%)),
-      map((dbo: I%Model_NAME%DBO) => %Model_NAME%Mapper.fromDBO(dbo)),
+    return from(this.%model_NAME%Model.find()).pipe(
+      switchMap((dbos: I%Model_NAME%DBO[]) => dbos.map(dbo => %Model_NAME%Mapper.fromDBO(dbo))),
       toArray(),
+      catchError(err => {
+        // @TODO log error
+        return throwError(err);
+      }),
     );
   }
-  */
 
 }

@@ -3,9 +3,12 @@
  */
 
 import { Controller, Get, Post } from '@nestjs/common';
-import { Observable } from 'rxjs'
+import { Observable } from 'rxjs';
+import { mergeMap, map, toArray } from 'rxjs/operators';
 import { %Models_NAME%Service } from '../services/%model_NAME%.service';
 import { %Model_NAME% } from '../models/%model_NAME%.model';
+import { %Model_NAME%DTO } from '../dto/%model_NAME%.dto';
+import { %Model_NAME%Mapper } from '../mappers/%model_NAME%.mapper';
 
 @Controller('api/%model_NAME%')
 export class %Models_NAME%Controller {
@@ -16,12 +19,16 @@ export class %Models_NAME%Controller {
   }
 
   @Get()
-  getAll(): Observable<%Model_NAME%[]> {
-    return this.%models_NAME%Service.getAll();
+  getAll(): Observable<%Model_NAME%DTO[]> {
+    return this.%models_NAME%Service.getAll().pipe(
+      mergeMap((%model_NAME%: %Model_NAME%[]) => %model_NAME%),
+      map((model: %Model_NAME%) => %Model_NAME%Mapper.toDTO(model)),
+      toArray(),
+    );
   }
 
   @Post()
-  create(): Observable<%Model_NAME%> {
+  create(): Observable<%Model_NAME%DTO> {
     return this.%models_NAME%Service.create('user1'); // @TODO Here we need to set up our user loggin system
   }
 }
