@@ -25,7 +25,7 @@ describe('%Models_NAME%Service', () => {
     }).compile();
 
     service = module.get<%Models_NAME%Service>(%Models_NAME%Service);
-    mongoMock = module.get< %Model_NAME%MongoMock>(getModelToken('%MODEL_NAME%_MODEL'));
+    mongoMock = module.get< %Model_NAME%MongoMock>('%MODEL_NAME%_MODEL');
   });
 
   describe('constructor', () => {
