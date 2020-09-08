@@ -20,7 +20,7 @@ describe('%Models_NAME%Service', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         %Models_NAME%Service,
-        {provide: getModelToken('%MODEL_NAME%_MODEL'), useClass: %Model_NAME%MongoMock},
+        {provide: '%MODEL_NAME%_MODEL', useClass: %Model_NAME%MongoMock},
       ],
     }).compile();
 

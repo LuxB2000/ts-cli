@@ -2,8 +2,8 @@
  * This file has been generated using TS-CLI.
  */
 
-import { Controller, Get, Post } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import { Controller, Get, Post, Param, Put, Body } from '@nestjs/common';
+import { Observable, throwError } from 'rxjs';
 import { mergeMap, map, toArray } from 'rxjs/operators';
 import { %Models_NAME%Service } from '../services/%model_NAME%.service';
 import { %Model_NAME% } from '../models/%model_NAME%.model';
@@ -29,6 +29,18 @@ export class %Models_NAME%Controller {
 
   @Post()
   create(): Observable<%Model_NAME%DTO> {
-    return this.%models_NAME%Service.create('user1'); // @TODO Here we need to set up our user loggin system
+    return this.%models_NAME%Service.create('user1');
+  }
+
+  @Get('/:id')
+  getById(@Param('id') id: string): Observable<%Model_NAME%DTO> {
+    if (!id || id.trim().length <= 0 || id === 'null' || id === 'undefined') {
+      //@TODO log the error
+      return throwError(new Error('No id provided'));
+    }
+
+    return this.%models_NAME%Service.getById(id).pipe(
+      map((model: %Model_NAME%) => %Model_NAME%Mapper.toDTO(model)),
+    );
   }
 }
