@@ -185,7 +185,6 @@ const run = async () => {
           path: path.join($path, 'test/mock'),
           fileName: `${data.names.name}.mock.service.ts`,
         });
-        
       } else if (data.type.name === 'controller' || data.type.name === 'c') {
         // the service and unit tests
         templates.push({
@@ -198,6 +197,14 @@ const run = async () => {
           path: path.join($path, 'controllers'),
           fileName: `${data.names.name}.controller.spec.ts`,
         });
+        // if the mock of the logger does not exist, then creates it
+        if (!fs.existsSync(path.join($path, `test/mock/logger.mock.ts`))) {
+          templates.push({
+            file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), `tools`), `logger.mock.template.txt`)).toString(),
+            path: path.join($path, `test/mock`),
+            fileName: `logger.mock.ts`,
+          });
+        }
       }
     } else {
       // Front End: Angular

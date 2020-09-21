@@ -4,6 +4,7 @@
  */
 
 import { Test, TestingModule } from '@nestjs/testing';
+import { Logger } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { of } from 'rxjs';
@@ -11,6 +12,7 @@ import { %Models_NAME%Service } from './%model_NAME%.service';
 import { %Model_NAME%MongoMock } from '../test/mock/%model_NAME%.mock.model';
 import { %Model_NAME%Mapper } from '../mappers/%model_NAME%.mapper';
 import { MOCK_%MODEL_NAME%_DBOS, MOCK_%MODEL_NAME%_MODELS } from '../test/data/%model_NAME%.mock.data';
+import { MockLogger } from '../test/mock/logger.mock';
 
 describe('%Models_NAME%Service', () => {
   let service: %Models_NAME%Service;
@@ -21,6 +23,7 @@ describe('%Models_NAME%Service', () => {
       providers: [
         %Models_NAME%Service,
         {provide: '%MODEL_NAME%_MODEL', useClass: %Model_NAME%MongoMock},
+        // {provide: Logger, useClass: MockLogger},
       ],
     }).compile();
 

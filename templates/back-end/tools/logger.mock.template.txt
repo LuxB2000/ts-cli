@@ -1,0 +1,25 @@
+/**
+ * This file has been generated using TS-CLI.
+ * This file contains a simple mock for the Logger.
+ * Source: https://docs.nestjs.com/techniques/logger#logger
+ */
+
+import { LoggerService } from '@nestjs/common';
+
+export class MockLogger implements LoggerService {
+  log(message: string) {
+    /* your implementation */
+  }
+  error(message: string, trace: string) {
+    /* your implementation */
+  }
+  warn(message: string) {
+    /* your implementation */
+  }
+  debug(message: string) {
+    /* your implementation */
+  }
+  verbose(message: string) {
+    /* your implementation */
+  }
+}
