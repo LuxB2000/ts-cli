@@ -43,4 +43,16 @@ export class %Models_NAME%Controller {
       map((model: %Model_NAME%) => %Model_NAME%Mapper.toDTO(model)),
     );
   }
+
+  @Put('/:id')
+  update(@Param('id') id: string, @Param('body') dto: %Model_NAME%DTO): Observable<%Model_NAME%DTO> {
+    if (!id || id.trim().length <= 0 || id === 'null' || id === 'undefined') {
+      //@TODO log the error
+      return throwError(new Error('No id provided'));
+    }
+    const %model_NAME% = %Model_NAME%Mapper.fromDTO(dto);
+     return this.%models_NAME%Service.update(%model_NAME%).pipe(
+      map(%model_NAME%Updated => %Model_NAME%Mapper.toDTO(%model_NAME%Updated)),
+    );
+  }
 }
