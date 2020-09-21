@@ -79,7 +79,7 @@ export class %Models_NAME%Service {
    */
   update(%model_NAME%: %Model_NAME%): Observable<%Model_NAME%> {
     return from(this.%model_NAME%Model.findOneAndUpdate({ _id: %model_NAME%.id }, { ...%model_NAME% })).pipe(
-      map((updateResult) => %model_NAME%),
+      map((updateResult) => %Model_NAME%Mapper.fromDBO(updateResult)),
       catchError(err => {
         // @TODO Log error
         return throwError(err);

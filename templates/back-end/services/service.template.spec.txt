@@ -150,6 +150,7 @@ describe('%Models_NAME%Service', () => {
         err => error = err,
       );
       expect(error).toBeUndefined();
+      expect(response).not.toBeUndefined();
       expect(updateSpy).toHaveBeenCalledTimes(1);
       expect(updateSpy).toHaveBeenCalledWith({ _id: MOCK_%MODEL_NAME%_MODELS[0].id  }, { ...data });
     });

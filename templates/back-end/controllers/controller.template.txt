@@ -45,7 +45,7 @@ export class %Models_NAME%Controller {
   }
 
   @Put('/:id')
-  update(@Param('id') id: string, @Param('body') dto: %Model_NAME%DTO): Observable<%Model_NAME%DTO> {
+  update(@Param('id') id: string, @Body() dto: %Model_NAME%DTO): Observable<%Model_NAME%DTO> {
     if (!id || id.trim().length <= 0 || id === 'null' || id === 'undefined') {
       //@TODO log the error
       return throwError(new Error('No id provided'));
