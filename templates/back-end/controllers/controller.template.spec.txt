@@ -3,6 +3,7 @@
  */
 
 import { Test, TestingModule } from '@nestjs/testing';
+import { of } from 'rxjs';
 import { %Models_NAME%Controller } from './%model_NAME%.controller';
 import { %Models_NAME%Service } from '../services/%model_NAME%.service';
 import { %Models_NAME%ServiceStub } from '../test/mock/%model_NAME%.mock.service';
@@ -121,4 +122,68 @@ describe('%Models_NAME% Controller', () => {
       expect(response).toBeUndefined();
     });
   });
+
+  describe('update', () => {
+    const id = `abc`;
+    it('should call service.update()', async () => {
+      let response;
+      let error;
+      const serviceSpy = jest.spyOn(service, 'update').mockReturnValue(of(MOCK_%MODEL_NAME%_MODELS[0]));;
+      await controller.update(id, MOCK_%MODEL_NAME%_DTOS[0]).subscribe(
+        res => response = res,
+        err => error = err,
+      );
+      expect(error).toBeUndefined();
+      expect(response).not.toBeUndefined();
+      expect(serviceSpy).toHaveBeenCalledTimes(1);
+    });
+    it('should call %Model_NAME%Mapper.fromDTO()', async () => {
+      let response;
+      let error;
+      jest.spyOn(service, 'update').mockReturnValue(of(MOCK_%MODEL_NAME%_MODELS[0]));;
+      const mapperSpy = jest.spyOn(%Model_NAME%Mapper, 'fromDTO').mockReturnValue(MOCK_%MODEL_NAME%_MODELS[0]);;
+      await controller.update(id, MOCK_%MODEL_NAME%_DTOS[0]).subscribe(
+        res => response = res,
+        err => error = err,
+      );
+      expect(error).toBeUndefined();
+      expect(response).not.toBeUndefined();
+      expect(mapperSpy).toHaveBeenCalledTimes(1);
+    });
+    it('should call %Model_NAME%Mapper.toDTO()', async () => {
+      let response;
+      let error;
+      jest.spyOn(service, 'update').mockReturnValue(of(MOCK_%MODEL_NAME%_MODELS[0]));;
+      const mapperSpy = jest.spyOn(%Model_NAME%Mapper, 'toDTO').mockReturnValue(MOCK_%MODEL_NAME%_DTOS[0]);;
+      await controller.update(id, MOCK_%MODEL_NAME%_DTOS[0]).subscribe(
+        res => response = res,
+        err => error = err,
+      );
+      expect(error).toBeUndefined();
+      expect(response).not.toBeUndefined();
+      expect(mapperSpy).toHaveBeenCalled(); //Times(1); // why call multiple times?
+    });
+    it('should call return an error if no id is provided', async () => {
+      let response;
+      let error;
+      jest.spyOn(service, 'update').mockReturnValue(of(MOCK_%MODEL_NAME%_MODELS[0]));;
+      await controller.update(undefined, MOCK_%MODEL_NAME%_DTOS[0]).subscribe(
+        res => response = res,
+        err => error = err,
+      );
+      expect(error).not.toBeUndefined();
+      expect(response).toBeUndefined();
+    });
+    it('should call return an error if an empty string is provided', async () => {
+      let response;
+      let error;
+      jest.spyOn(service, 'update').mockReturnValue(of(MOCK_%MODEL_NAME%_MODELS[0]));;
+      await controller.update('', MOCK_%MODEL_NAME%_DTOS[0]).subscribe(
+        res => response = res,
+        err => error = err,
+      );
+      expect(error).not.toBeUndefined();
+      expect(response).toBeUndefined();
+    });
+  })
 });

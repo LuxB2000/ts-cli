@@ -123,7 +123,7 @@ describe('%Models_NAME%Service', () => {
       expect(findOneSpy).toHaveBeenCalledTimes(1);
       expect(findOneSpy).toHaveBeenCalledWith({ _id: 'abc' });
     });
-    it(`should map the found DBO to a model and return it`, async () => {
+    it(`should map the found DBO to a data and return it`, async () => {
       let response;
       let error;
       const mapperSpy = jest.spyOn(%Model_NAME%Mapper, 'fromDBO').mockReturnValue(MOCK_%MODEL_NAME%_MODELS[0]);
@@ -137,6 +137,45 @@ describe('%Models_NAME%Service', () => {
       expect(mapperSpy).toHaveBeenCalledWith(MOCK_%MODEL_NAME%_DBOS[0]);
       expect(response).not.toBeUndefined();
       expect(response).toEqual(MOCK_%MODEL_NAME%_MODELS[0]);
+    });
+  });
+  describe('update', () => {
+    const data = { ...MOCK_%MODEL_NAME%_MODELS[0] };
+    it(`should call repository.findOneAndUpdate() with the correct params`, async () => {
+      let response;
+      let error;
+      const updateSpy = jest.spyOn(mongoMock, 'findOneAndUpdate');
+      await service.update(data).subscribe(
+        res => response = res,
+        err => error = err,
+      );
+      expect(error).toBeUndefined();
+      expect(updateSpy).toHaveBeenCalledTimes(1);
+      expect(updateSpy).toHaveBeenCalledWith({ _id: MOCK_%MODEL_NAME%_MODELS[0].id  }, { ...data });
+    });
+    it(`should return the provided data`, async () => {
+      let response;
+      let error;
+      await service.update(data).subscribe(
+        res => response = res,
+        err => error = err,
+      );
+      expect(error).toBeUndefined();
+      expect(response).not.toBeUndefined();
+      expect(response).toEqual(data);
+    });
+    it(`should throw an Error if an error happens`, async () => {
+      let response;
+      let error;
+      const updateSpy = jest.spyOn(mongoMock, 'findOneAndUpdate').mockRejectedValue(new Error('some error'));
+      await service.update(data).subscribe(
+        res => response = res,
+        err => error = err,
+      );
+      expect(response).toBeUndefined();
+      expect(error).not.toBeUndefined();
+      expect(error).toBeInstanceOf(Error);
+      expect(error.message).toEqual('some error');
     });
   });
 });

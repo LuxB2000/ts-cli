@@ -20,4 +20,8 @@ export class %Models_NAME%ServiceStub {
   create():Observable<%Model_NAME%> {
     return of(MOCK_%MODEL_NAME%_MODELS[0]);
   }
+
+  update(): Observable<%Model_NAME%> {
+    return of(MOCK_%MODEL_NAME%_MODELS[0]);
+  }
 }
