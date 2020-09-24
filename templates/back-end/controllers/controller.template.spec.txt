@@ -3,7 +3,6 @@
  */
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { Logger } from '@nestjs/common';
 import { of } from 'rxjs';
 import { %Models_NAME%Controller } from './%model_NAME%.controller';
 import { %Models_NAME%Service } from '../services/%model_NAME%.service';
@@ -11,11 +10,13 @@ import { %Models_NAME%ServiceStub } from '../test/mock/%model_NAME%.mock.service
 import { %Model_NAME%Mapper } from '../mappers/%model_NAME%.mapper';
 import { MOCK_%MODEL_NAME%_DTOS, MOCK_%MODEL_NAME%_MODELS } from '../test/data/%model_NAME%.mock.data';
 import { MockLogger } from '../test/mock/logger.mock';
+import { Logger } from '../tools/logger/logger';
 
 describe('%Models_NAME% Controller', () => {
   let controller: %Models_NAME%Controller;
   let service: %Models_NAME%Service;
   const now = new Date(Date.now());
+  let logger: Logger;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -30,6 +31,7 @@ describe('%Models_NAME% Controller', () => {
 
     controller = module.get<%Models_NAME%Controller>(%Models_NAME%Controller);
     service = module.get<%Models_NAME%Service>(%Models_NAME%Service);
+    logger = module.get<Logger>(Logger);
 
     // mock the time for creationDate
     jest.spyOn(Date, 'now').mockImplementation(() => now.getMilliseconds());
@@ -113,16 +115,18 @@ describe('%Models_NAME% Controller', () => {
       expect(mapperSpy).toHaveBeenCalledWith(MOCK_%MODEL_NAME%_MODELS[0]);
       expect(response).toEqual(MOCK_%MODEL_NAME%_DTOS[0]);
     });
-    it('should return an error if no id is provided', async () => {
+    it('should return and log an error if no id is provided', async () => {
       let response;
       let error;
       const mapperSpy = jest.spyOn(%Model_NAME%Mapper, 'toDTO').mockReturnValue(MOCK_%MODEL_NAME%_DTOS[0]);
+      const loggerSpy = jest.spyOn(logger, 'error');
       await controller.getById(undefined).subscribe(
         res => response = res,
         err => error = err,
       );
       expect(error).not.toBeUndefined();
       expect(response).toBeUndefined();
+      expect(loggerSpy).toHaveBeenCalledWith('No id provided', '%Models_NAME%Controller::getById');
     });
   });
 
@@ -166,27 +170,31 @@ describe('%Models_NAME% Controller', () => {
       expect(response).not.toBeUndefined();
       expect(mapperSpy).toHaveBeenCalled(); //Times(1); // why call multiple times?
     });
-    it('should call return an error if no id is provided', async () => {
+    it('should return and log an error if no id is provided', async () => {
       let response;
       let error;
       jest.spyOn(service, 'update').mockReturnValue(of(MOCK_%MODEL_NAME%_MODELS[0]));;
+      const loggerSpy = jest.spyOn(logger, 'error');
       await controller.update(undefined, MOCK_%MODEL_NAME%_DTOS[0]).subscribe(
         res => response = res,
         err => error = err,
       );
       expect(error).not.toBeUndefined();
       expect(response).toBeUndefined();
+      expect(loggerSpy).toHaveBeenCalledWith('No id provided', '%Models_NAME%Controller::update');
     });
-    it('should call return an error if an empty string is provided', async () => {
+    it('should return and log an error if an empty string is provided', async () => {
       let response;
       let error;
       jest.spyOn(service, 'update').mockReturnValue(of(MOCK_%MODEL_NAME%_MODELS[0]));;
+      const loggerSpy = jest.spyOn(logger, 'error');
       await controller.update('', MOCK_%MODEL_NAME%_DTOS[0]).subscribe(
         res => response = res,
         err => error = err,
       );
       expect(error).not.toBeUndefined();
       expect(response).toBeUndefined();
+      expect(loggerSpy).toHaveBeenCalledWith('No id provided', '%Models_NAME%Controller::update');
     });
   })
 });

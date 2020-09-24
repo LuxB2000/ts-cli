@@ -3,11 +3,13 @@
  * This file contains the service to Create, Read, Update and Delete %Model_NAME% Objects.
  */
 
-import { Injectable, Inject } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
+import { Injectable, Inject } from '@nestjs/common';
+import { InjectModel }        from '@nestjs/mongoose';
 import { Observable, of, from, throwError } from 'rxjs';
 import { switchMap, mergeMap, concatMap, map, toArray, catchError } from 'rxjs/operators';
+
+import { Logger } from '../tools/logger/logger';
 import { %Model_NAME% } from '../models/%model_NAME%.model';
 import { I%Model_NAME%DBO } from '../dbo/%model_NAME%.schema';
 import { %Model_NAME%Mapper } from '../mappers/%model_NAME%.mapper';
@@ -16,6 +18,7 @@ import { %Model_NAME%Mapper } from '../mappers/%model_NAME%.mapper';
 export class %Models_NAME%Service {
 
   constructor(
+    private readonly logger: Logger,
     @Inject('%MODEL_NAME%_MODEL') private readonly %model_NAME%Model: Model<I%Model_NAME%DBO>,
   ) {
 
@@ -67,7 +70,7 @@ export class %Models_NAME%Service {
       switchMap((dbos: I%Model_NAME%DBO[]) => dbos.map(dbo => %Model_NAME%Mapper.fromDBO(dbo))),
       toArray(),
       catchError(err => {
-        // @TODO log error
+        this.logger.error(`${err.message}`, err.trace);
         return throwError(err);
       }),
     );
@@ -81,7 +84,7 @@ export class %Models_NAME%Service {
     return from(this.%model_NAME%Model.findOneAndUpdate({ _id: %model_NAME%.id }, { ...%model_NAME% })).pipe(
       map((updateResult) => %Model_NAME%Mapper.fromDBO(updateResult)),
       catchError(err => {
-        // @TODO Log error
+        this.logger.error(`${err.message}`, err.trace);
         return throwError(err);
       }),
     );
