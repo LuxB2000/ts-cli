@@ -23,7 +23,7 @@ npm link
 $ nestjs new dummy-nestjs
 $ cd dummy-nestjs
 $ npm install --save mongoose
-$ npm install --save-dev  @types/mongoose @nestjs/mongoose
+$ npm install --save-dev  @types/mongoose @nestjs/mongoose @nestjs/swagger
 $ ts-cli
 $ npm run test:watch
 ```

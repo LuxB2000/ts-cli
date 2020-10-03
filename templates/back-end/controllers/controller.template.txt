@@ -3,6 +3,7 @@
  */
 
 import { Controller, Get, Post, Delete, Param, Put, Body } from '@nestjs/common';
+import { ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { Observable, throwError } from 'rxjs';
 import { mergeMap, map, toArray } from 'rxjs/operators';
 
@@ -21,6 +22,10 @@ export class %Models_NAME%Controller {
   ) {
   }
 
+  @ApiOperation({ description: 'Get all %Model_NAME%', summary: 'Get all %Model_NAME%'})
+  @ApiOkResponse({ description: 'Succes', status: 200})
+  @ApiInternalServerErrorResponse( {description: 'An internal error occured', status: 500})
+  @ApiUnauthorizedResponse( {description: 'Not permitted', status: 401})
   @Get()
   getAll(): Observable<%Model_NAME%DTO[]> {
     return this.%models_NAME%Service.getAll().pipe(
@@ -30,6 +35,10 @@ export class %Models_NAME%Controller {
     );
   }
 
+  @ApiOperation({ description: 'Create a %Model_NAME% by ID', summary: 'Create a %Model_NAME% by ID'})
+  @ApiOkResponse({ description: 'Succes', status: 200})
+  @ApiInternalServerErrorResponse( {description: 'An internal error occured', status: 500})
+  @ApiUnauthorizedResponse( {description: 'Not permitted', status: 401})
   @Post()
   create(): Observable<%Model_NAME%DTO> {
     return this.%models_NAME%Service.create('user1').pipe(
@@ -37,6 +46,11 @@ export class %Models_NAME%Controller {
     );
   }
 
+  @ApiOperation({ description: 'Get a %Model_NAME% by ID', summary: 'Get a %Model_NAME% by ID'})
+  @ApiOkResponse({ description: 'Succes', status: 200})
+  @ApiNotFoundResponse( {description: 'Not found', status: 404})
+  @ApiInternalServerErrorResponse( {description: 'An internal error occured', status: 500})
+  @ApiUnauthorizedResponse( {description: 'Not permitted', status: 401})
   @Get('/:id')
   getById(@Param('id') id: string): Observable<%Model_NAME%DTO> {
     if (!id || id.trim().length <= 0 || id === 'null' || id === 'undefined') {
@@ -50,6 +64,11 @@ export class %Models_NAME%Controller {
     );
   }
 
+  @ApiOperation({ description: 'Updates a %Model_NAME% by ID', summary: 'Updates a %Model_NAME% by ID'})
+  @ApiOkResponse({ description: 'Succes', status: 200})
+  @ApiNotFoundResponse( {description: 'Not found', status: 404})
+  @ApiInternalServerErrorResponse( {description: 'An internal error occured', status: 500})
+  @ApiUnauthorizedResponse( {description: 'Not permitted', status: 401})
   @Put('/:id')
   update(@Param('id') id: string, @Body() dto: %Model_NAME%DTO): Observable<%Model_NAME%DTO> {
     if (!id || id.trim().length <= 0 || id === 'null' || id === 'undefined') {
@@ -63,6 +82,11 @@ export class %Models_NAME%Controller {
     );
   }
 
+  @ApiOperation({ description: 'Deletes a %Model_NAME% by ID', summary: 'Deletes a %Model_NAME% by ID'})
+  @ApiOkResponse({ description: 'Succes', status: 200})
+  @ApiNotFoundResponse( {description: 'Not found', status: 404})
+  @ApiInternalServerErrorResponse( {description: 'An internal error occured', status: 500})
+  @ApiUnauthorizedResponse( {description: 'Not permitted', status: 401})
   @Delete('/:id')
   delete(@Param('id') id: string): Observable<boolean> {
     if (!id || id.trim().length <= 0 || id === 'null' || id === 'undefined') {
