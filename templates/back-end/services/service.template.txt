@@ -92,4 +92,12 @@ export class %Models_NAME%Service {
     );
   }
 
+  /**
+   * Deletes an %model_NAME% document in the %model_NAME%s collection. Warning: this is a definitive operation
+   * @param id the UID of the document to delete
+   */
+  delete(id: string): Observable<void> {
+    return of(undefined);
+  }
+
 }

@@ -24,4 +24,8 @@ export class %Models_NAME%ServiceStub {
   update(): Observable<%Model_NAME%> {
     return of(MOCK_%MODEL_NAME%_MODELS[0]);
   }
+
+  delete(id: string): Observable<void> {
+    return of(undefined);
+  }
 }
