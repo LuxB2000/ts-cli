@@ -5,6 +5,8 @@
 import { Controller, Get, Post, Param, Put, Body } from '@nestjs/common';
 import { Observable, throwError } from 'rxjs';
 import { mergeMap, map, toArray } from 'rxjs/operators';
+
+import { Logger } from '../tools/logger/logger';
 import { %Models_NAME%Service } from '../services/%model_NAME%.service';
 import { %Model_NAME% } from '../models/%model_NAME%.model';
 import { %Model_NAME%DTO } from '../dto/%model_NAME%.dto';
@@ -14,6 +16,7 @@ import { %Model_NAME%Mapper } from '../mappers/%model_NAME%.mapper';
 export class %Models_NAME%Controller {
 
   constructor(
+    private readonly logger: Logger,
     private readonly %models_NAME%Service: %Models_NAME%Service,
   ) {
   }
@@ -35,8 +38,9 @@ export class %Models_NAME%Controller {
   @Get('/:id')
   getById(@Param('id') id: string): Observable<%Model_NAME%DTO> {
     if (!id || id.trim().length <= 0 || id === 'null' || id === 'undefined') {
-      //@TODO log the error
-      return throwError(new Error('No id provided'));
+      const errorMsg = 'No id provided';
+      this.logger.error(errorMsg, '%Models_NAME%Controller::getById');
+      return throwError(new Error(errorMsg));
     }
 
     return this.%models_NAME%Service.getById(id).pipe(
@@ -45,10 +49,11 @@ export class %Models_NAME%Controller {
   }
 
   @Put('/:id')
-  update(@Param('id') id: string, @Param('body') dto: %Model_NAME%DTO): Observable<%Model_NAME%DTO> {
+  update(@Param('id') id: string, @Body() dto: %Model_NAME%DTO): Observable<%Model_NAME%DTO> {
     if (!id || id.trim().length <= 0 || id === 'null' || id === 'undefined') {
-      //@TODO log the error
-      return throwError(new Error('No id provided'));
+      const errorMsg = 'No id provided';
+      this.logger.error(errorMsg, '%Models_NAME%Controller::update');
+      return throwError(new Error(errorMsg));
     }
     const %model_NAME% = %Model_NAME%Mapper.fromDTO(dto);
      return this.%models_NAME%Service.update(%model_NAME%).pipe(
