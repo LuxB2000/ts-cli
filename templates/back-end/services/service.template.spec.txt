@@ -6,7 +6,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
-import { of } from 'rxjs';
+import { of, throwError} from 'rxjs';
 import { %Models_NAME%Service } from './%model_NAME%.service';
 import { %Model_NAME%MongoMock } from '../test/mock/%model_NAME%.mock.model';
 import { %Model_NAME%Mapper } from '../mappers/%model_NAME%.mapper';
@@ -44,6 +44,7 @@ describe('%Models_NAME%Service', () => {
     it('should call %Model_NAME%Mapper.createDBO with expected input', async() => {
       let error;
       let response;
+      jest.spyOn(mongoMock, 'create').mockResolvedValue(MOCK_%MODEL_NAME%_DBOS[0]);
       const spy = jest.spyOn(%Model_NAME%Mapper, 'createDBO').mockReturnValue(MOCK_%MODEL_NAME%_DBOS[0]);
       await service.create(user).subscribe(
         res => response = res,
@@ -60,10 +61,10 @@ describe('%Models_NAME%Service', () => {
         softDeleted: false,
       });
     });
-    it('should call the Model.save() function', async() => {
+    it('should call the Model.create() function', async() => {
       let error;
       let response;
-      const spy = jest.spyOn(Model.prototype, 'save').mockReturnThis();
+      const spy = jest.spyOn(mongoMock, 'create').mockResolvedValue(MOCK_%MODEL_NAME%_DBOS[0]);
       await service.create(user).subscribe(
         res => response = res,
         err => error = err,
@@ -83,6 +84,20 @@ describe('%Models_NAME%Service', () => {
       expect(error).toBeUndefined();
       expect(response).not.toBeUndefined();
       expect(spy).toHaveBeenCalledTimes(1);
+    });
+    it(`should return and log an error if the repository throw an error`, async () => {
+      let error;
+      let response;
+      const errorMsg = 'some error';
+      jest.spyOn(mongoMock, 'create').mockRejectedValue(new Error(errorMsg));
+      const loggerSpy = jest.spyOn(logger, 'error');
+      await service.create(user).subscribe(
+        res => response = res,
+        err => error = err,
+      );
+      expect(error).not.toBeUndefined();
+      expect(response).toBeUndefined();
+      expect(loggerSpy).toHaveBeenCalledTimes(1);
     });
   });
   describe('getAll', () => {

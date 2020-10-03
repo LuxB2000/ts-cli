@@ -29,18 +29,20 @@ export class %Models_NAME%Service {
    * @param data information to record in the database
    */
   public create(user: string): Observable<%Model_NAME%> {
-    return of(%Model_NAME%Mapper.createDBO({
+    const model = %Model_NAME%Mapper.createDBO({
       id: undefined,
       softDeleted: false,
       creationDate: undefined,
       lastModificationDate: undefined,
       lastModificationBy: user,
-    })).pipe(
-      switchMap((%model_NAME%: I%Model_NAME%DBO) => {
-        %model_NAME%.save();
-        return of(%model_NAME%);
-      }),
-      switchMap((%model_NAME%: I%Model_NAME%DBO) => of(%Model_NAME%Mapper.fromDBO(%model_NAME%))));
+    });
+    return from(this.%model_NAME%Model.create(model)).pipe(
+      map((%model_NAME%: I%Model_NAME%DBO) => %Model_NAME%Mapper.fromDBO(%model_NAME%)),
+      catchError(err => {
+        this.logger.error(`${err.message}`, err.trace);
+        return throwError(err);
+      })
+    );
   }
 
   /**
@@ -56,7 +58,7 @@ export class %Models_NAME%Service {
         return of(%Model_NAME%Mapper.fromDBO(dbo));
       }),
       catchError(err => {
-        // @TODO log error
+        this.logger.error(`${err.message}`, err.trace);
         return throwError(err);
       }),
     );
