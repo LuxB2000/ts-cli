@@ -32,7 +32,9 @@ export class %Models_NAME%Controller {
 
   @Post()
   create(): Observable<%Model_NAME%DTO> {
-    return this.%models_NAME%Service.create('user1');
+    return this.%models_NAME%Service.create('user1').pipe(
+      map((model: %Model_NAME%) => %Model_NAME%Mapper.toDTO(model)),
+    );
   }
 
   @Get('/:id')
