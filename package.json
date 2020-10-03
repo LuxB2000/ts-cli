@@ -14,6 +14,9 @@
     "type": "git",
     "url": "\u0016https://github.com/LuxB2000/ts-cli.git"
   },
+  "engines": {
+    "node": "12.0.0"
+  },
   "keywords": [
     "typescript",
     "cli"
