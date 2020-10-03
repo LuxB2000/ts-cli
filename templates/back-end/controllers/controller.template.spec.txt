@@ -236,7 +236,7 @@ describe('%Models_NAME% Controller', () => {
         err => error = err,
       );
       expect(error).toBeUndefined();
-      expect(response).toBeUndefined();
+      expect(response).not.toBeUndefined();
       expect(serviceSpy).toHaveBeenCalledWith(id);
     });
     it('should throw an error if the service.delete function throw an error', async () => {});

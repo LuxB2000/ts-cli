@@ -96,8 +96,14 @@ export class %Models_NAME%Service {
    * Deletes an %model_NAME% document in the %model_NAME%s collection. Warning: this is a definitive operation
    * @param id the UID of the document to delete
    */
-  delete(id: string): Observable<void> {
-    return of(undefined);
+  delete(id: string): Observable<boolean> {
+    return from(this.%model_NAME%Model.deleteOne({ _id: id})).pipe(
+      map((deleteResults) => deleteResults.deletedCount === 1),
+      catchError(err => {
+        this.logger.error(`${err.message}`, err.trace);
+        return throwError(err);
+      }),
+    )
   }
 
 }

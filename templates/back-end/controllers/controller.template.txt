@@ -62,7 +62,7 @@ export class %Models_NAME%Controller {
   }
 
   @Delete('/:id')
-  delete(@Param('id') id: string): Observable<void> {
+  delete(@Param('id') id: string): Observable<boolean> {
     if (!id || id.trim().length <= 0 || id === 'null' || id === 'undefined') {
       const errorMsg = 'No id provided';
       this.logger.error(errorMsg, '%Models_NAME%Controller::delete');

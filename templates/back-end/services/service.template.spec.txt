@@ -217,4 +217,39 @@ describe('%Models_NAME%Service', () => {
       expect(loggerSpy).toHaveBeenCalledWith(errorMsg, undefined); // no trace define yet
     });
   });
+
+  describe('delete', () => {
+    const id = 'abc';
+    it('should call the modele.deleteOne function', async () => {
+      let response;
+      let error;
+      const registoryMock = jest.spyOn(mongoMock, 'deleteOne').mockResolvedValue({
+        n: 1,
+        ok: 1,
+        deletedCount: 1,
+      });
+      await service.delete(id).subscribe(
+        res => response = res,
+        err => error = err,
+      );
+      expect(response).not.toBeUndefined();
+      expect(error).toBeUndefined();
+      expect(response).toEqual(true);
+      expect(registoryMock).toHaveBeenCalledWith({_id: id});
+    });
+    it('should throw and log an error if the modele.deleteOne thrown an error', async () => {
+      let response;
+      let error;
+      const errorMsg = 'some error';
+      jest.spyOn(mongoMock, 'deleteOne').mockRejectedValue(new Error(errorMsg));
+      const loggerSpy = jest.spyOn(logger, 'error');
+      await service.delete(id).subscribe(
+        res => response = res,
+        err => error = err,
+      );
+      expect(response).toBeUndefined();
+      expect(error).not.toBeUndefined();
+      expect(loggerSpy).toHaveBeenCalledWith(`${errorMsg}`, undefined);
+    });
+  })
 });
