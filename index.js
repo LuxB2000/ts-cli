@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const chalk = require('chalk');
 const clear = require('clear');
 const figlet = require('figlet');
@@ -63,13 +65,12 @@ let PATH = process.env.CLIPATH || process.cwd();
  * DEBUG
  */
 // PATH += '..\\..\\test\\dummy-nestjs\\src';
-PATH = '/Users/plumat/Workspace/test/dummy-nestjs/src';
 /**
  * // DEBUG
  */
 
- const templatePath = process.cwd() + '/templates';
- const templates = [];
+const templatePath = process.cwd() + '/templates';
+const templates = [];
 // main function
 const run = async () => {
   
