@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const chalk = require('chalk');
 const clear = require('clear');
 const figlet = require('figlet');
@@ -63,19 +65,19 @@ let PATH = process.env.CLIPATH || process.cwd();
  * DEBUG
  */
 // PATH += '..\\..\\test\\dummy-nestjs\\src';
-PATH = '/Users/plumat/Workspace/test/dummy-nestjs/src';
 /**
  * // DEBUG
  */
 
- const templatePath = process.cwd() + '/templates';
- const templates = [];
+const templatePath = process.cwd() + '/templates';
+const templates = [];
 // main function
 const run = async () => {
   
   try {
     let data = {};
     let generateDatabaseProvider = false;
+    let addLogger = false;
     const aGeneral = await inquirer.prompt(qGeneral);
     const $path = PATH; // path.join(PATH, aGeneral.path);
     console.log(`path: ${$path}`);
@@ -185,7 +187,23 @@ const run = async () => {
           path: path.join($path, 'test/mock'),
           fileName: `${data.names.name}.mock.service.ts`,
         });
-        
+        // if the logger is not does not exist, then creates it
+        if (!fs.existsSync(path.join($path, `tools/logger/logger.ts`))) {
+          addLogger = true;
+          templates.push({
+            file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), 'tools'), 'logger.template.txt')).toString(),
+            path: path.join($path, 'tools/logger'),
+            fileName: 'logger.ts',
+          });
+        }
+        // if the mock of the logger does not exist, then creates it
+        if (!fs.existsSync(path.join($path, `test/mock/logger.mock.ts`))) {
+          templates.push({
+            file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), `tools`), `logger.mock.template.txt`)).toString(),
+            path: path.join($path, `test/mock`),
+            fileName: `logger.mock.ts`,
+          });
+        }
       } else if (data.type.name === 'controller' || data.type.name === 'c') {
         // the service and unit tests
         templates.push({
@@ -198,6 +216,23 @@ const run = async () => {
           path: path.join($path, 'controllers'),
           fileName: `${data.names.name}.controller.spec.ts`,
         });
+        // if the logger is not does not exist, then creates it
+        if (!fs.existsSync(path.join($path, `tools/logger/logger.ts`))) {
+          addLogger = true;
+          templates.push({
+            file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), 'tools'), 'logger.template.txt')).toString(),
+            path: path.join($path, 'tools/logger'),
+            fileName: 'logger.ts',
+          });
+        }
+        // if the mock of the logger does not exist, then creates it
+        if (!fs.existsSync(path.join($path, `test/mock/logger.mock.ts`))) {
+          templates.push({
+            file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), `tools`), `logger.mock.template.txt`)).toString(),
+            path: path.join($path, `test/mock`),
+            fileName: `logger.mock.ts`,
+          });
+        }
       }
     } else {
       // Front End: Angular
@@ -225,9 +260,14 @@ const run = async () => {
     console.log(`appModule modifications ...`);
     // add the dependencies to the App module
     let strToFind;
+    let strToFindInMain = [];
     const appModule = fs.readFileSync(path.join($path, 'app.module.ts')).toString();
+    const mainFile = fs.readFileSync(path.join($path, 'main.ts')).toString();
     let strToAddImport;
     let strToAddDependencies;
+    let strToAddImportInMain = [];
+    let strToAddDependenciesInMain;
+    let shiftInMain = [];
     if (data.type.name === 'model' || data.type.name === 'm') {
       strToFind = `providers: [`;
       strToAddImport =`\n\t\t... ${data.names.Names}Providers,`;
@@ -236,10 +276,22 @@ const run = async () => {
         strToAddImport = `\n\t\t... databaseProviders,` + strToAddImport;
         strToAddDependencies = `import { databaseProviders } from './providers/database.providers';\n` + strToAddDependencies;
       }
+      
     } else if (data.type.name === 'service' || data.type.name === 's') {
       strToFind = `providers: [`;
       strToAddImport =`\n\t\t${data.names.Names}Service,`;
       strToAddDependencies = `import { ${data.names.Names}Service } from './services/${data.names.name}.service';\n`;
+      if (addLogger) {
+        strToFindInMain = [`AppModule);`, `AppModule)`];
+        shiftInMain = [0, -1];
+        strToAddImport +=`\n\t\tLogger,`;
+        strToAddDependencies += `import { Logger } from './tools/logger/logger';\n`;
+        strToAddImportInMain = [
+          `\n\tapp.useLogger(new Logger());`,
+          `, {\n\t\tlogger: ['warn', 'error', 'log', 'debug', 'verbose'],\n\t}`
+        ];
+        strToAddDependenciesInMain = `import { Logger } from './tools/logger/logger';\n`;
+      }
     } else if (data.type.name === 'controller' || data.type.name === 'c') {
       strToFind = `controllers: [`;
       strToAddImport =`\n\t\t${data.names.Names}Controller,`;
@@ -264,9 +316,35 @@ const run = async () => {
           strToAddDependencies +
           newAppModule.slice(indexImport, newAppModule.length);
       }
-      // write the new file
+      // write the new 'app.module' file
       fs.writeFileSync(path.join($path, 'app.module.ts'), newAppModule);
     }
+    // update main file
+    let i = 0;
+    let newMain = mainFile;
+    for (i = 0; i < strToFindInMain.length; i++) {
+      const index = mainFile.indexOf(strToFindInMain[i]);
+      if (index >= 0) {
+        if (newMain.indexOf(strToAddImportInMain[i].trim()) === -1) {
+          newMain = newMain.slice(0, index + strToFindInMain[i].length + shiftInMain[i]) +
+            strToAddImportInMain[i] +
+            newMain.slice(index + strToFindInMain[i].length + shiftInMain[i], newMain.length);
+        }
+      }
+    }
+    // add the dependencies
+    // look for the last import line
+    let indexImport = newMain.lastIndexOf('import {');
+    indexImport = newMain.indexOf('\n', indexImport);
+    if (strToAddDependenciesInMain && strToAddDependenciesInMain.length > 0) {
+      if (newMain.indexOf(strToAddDependenciesInMain.trim()) === -1) {
+        newMain = newMain.slice(0, indexImport + 1) + 
+          strToAddDependenciesInMain +
+          newMain.slice(indexImport, newMain.length);
+      }
+    }    
+    // write the new 'main.ts' file
+    fs.writeFileSync(path.join($path, 'main.ts'), newMain);
     console.log(`... appModule modifications done`);
   } catch (error) {
     console.log(chalk.red('Error during the process.'));

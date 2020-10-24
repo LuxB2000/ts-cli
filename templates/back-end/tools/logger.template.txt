@@ -1,0 +1,25 @@
+/**
+ * This file has been generated using TS-CLI.
+ * This file contains a simple logger service. Feel free to create a better one ;)
+ * Source: https://docs.nestjs.com/techniques/logger#logger
+ */
+
+import { LoggerService } from '@nestjs/common';
+
+export class Logger implements LoggerService {
+  log(message: string): void {
+    console.log(`[log] ${message}`);
+  }
+  error(message: string, trace: string): void {
+    console.log(`[error] ${message}`);
+  }
+  warn(message: string): void {
+    console.log(`[warn] ${message}`);
+  }
+  debug(message: string): void{
+    console.log(`[debug] ${message}`);
+  }
+  verbose(message: string): void {
+    console.log(`[verbose] ${message}`);
+  }
+}

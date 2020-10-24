@@ -3,11 +3,13 @@
  * This file contains the service to Create, Read, Update and Delete %Model_NAME% Objects.
  */
 
-import { Injectable, Inject } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
+import { Injectable, Inject } from '@nestjs/common';
+import { InjectModel }        from '@nestjs/mongoose';
 import { Observable, of, from, throwError } from 'rxjs';
 import { switchMap, mergeMap, concatMap, map, toArray, catchError } from 'rxjs/operators';
+
+import { Logger } from '../tools/logger/logger';
 import { %Model_NAME% } from '../models/%model_NAME%.model';
 import { I%Model_NAME%DBO } from '../dbo/%model_NAME%.schema';
 import { %Model_NAME%Mapper } from '../mappers/%model_NAME%.mapper';
@@ -16,7 +18,8 @@ import { %Model_NAME%Mapper } from '../mappers/%model_NAME%.mapper';
 export class %Models_NAME%Service {
 
   constructor(
-    @InjectModel('%MODEL_NAME%_MODEL') private %model_NAME%Model: Model<I%Model_NAME%DBO>,
+    private readonly logger: Logger,
+    @Inject('%MODEL_NAME%_MODEL') private readonly %model_NAME%Model: Model<I%Model_NAME%DBO>,
   ) {
 
   }
@@ -26,18 +29,20 @@ export class %Models_NAME%Service {
    * @param data information to record in the database
    */
   public create(user: string): Observable<%Model_NAME%> {
-    return of(%Model_NAME%Mapper.createDBO({
+    const model = %Model_NAME%Mapper.createDBO({
       id: undefined,
       softDeleted: false,
       creationDate: undefined,
       lastModificationDate: undefined,
       lastModificationBy: user,
-    })).pipe(
-      switchMap((%model_NAME%: I%Model_NAME%DBO) => {
-        %model_NAME%.save();
-        return of(%model_NAME%);
-      }),
-      switchMap((%model_NAME%: I%Model_NAME%DBO) => of(%Model_NAME%Mapper.fromDBO(%model_NAME%))));
+    });
+    return from(this.%model_NAME%Model.create(model)).pipe(
+      map((%model_NAME%: I%Model_NAME%DBO) => %Model_NAME%Mapper.fromDBO(%model_NAME%)),
+      catchError(err => {
+        this.logger.error(`${err.message}`, err.trace);
+        return throwError(err);
+      })
+    );
   }
 
   /**
@@ -53,7 +58,7 @@ export class %Models_NAME%Service {
         return of(%Model_NAME%Mapper.fromDBO(dbo));
       }),
       catchError(err => {
-        // @TODO log error
+        this.logger.error(`${err.message}`, err.trace);
         return throwError(err);
       }),
     );
@@ -67,10 +72,38 @@ export class %Models_NAME%Service {
       switchMap((dbos: I%Model_NAME%DBO[]) => dbos.map(dbo => %Model_NAME%Mapper.fromDBO(dbo))),
       toArray(),
       catchError(err => {
-        // @TODO log error
+        this.logger.error(`${err.message}`, err.trace);
         return throwError(err);
       }),
     );
+  }
+
+  /**
+   * Updates an %model_NAME% document in the %model_NAME%s collection
+   * @param %model_NAME% the %model_NAME% model containing the old & updated values
+   */
+  update(%model_NAME%: %Model_NAME%): Observable<%Model_NAME%> {
+    return from(this.%model_NAME%Model.findOneAndUpdate({ _id: %model_NAME%.id }, { ...%model_NAME% })).pipe(
+      map((updateResult) => %Model_NAME%Mapper.fromDBO(updateResult)),
+      catchError(err => {
+        this.logger.error(`${err.message}`, err.trace);
+        return throwError(err);
+      }),
+    );
+  }
+
+  /**
+   * Deletes an %model_NAME% document in the %model_NAME%s collection. Warning: this is a definitive operation
+   * @param id the UID of the document to delete
+   */
+  delete(id: string): Observable<boolean> {
+    return from(this.%model_NAME%Model.deleteOne({ _id: id})).pipe(
+      map((deleteResults) => deleteResults.deletedCount === 1),
+      catchError(err => {
+        this.logger.error(`${err.message}`, err.trace);
+        return throwError(err);
+      }),
+    )
   }
 
 }

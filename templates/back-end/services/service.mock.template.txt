@@ -3,19 +3,29 @@
  * This file contains the mock of the %Model_NAME%Service, this can be used in the Controller Unit Test
  */
 
+import { of, Observable } from "rxjs";
+import { MOCK_%MODEL_NAME%_MODELS } from "../data/%model_NAME%.mock.data";
 import { %Model_NAME% } from "../../models/%model_NAME%.model";
 
 export class %Models_NAME%ServiceStub {
 
-  getAll(): %Model_NAME%[] {
-    return [];
+  getAll(): Observable<%Model_NAME%[]> {
+    return of(MOCK_%MODEL_NAME%_MODELS);
   }
   
-  getById(): %Model_NAME% {
-    return undefined;
+  getById(): Observable<%Model_NAME%> {
+    return of(MOCK_%MODEL_NAME%_MODELS[0]);
   }
 
-  create(): %Model_NAME% {
-    return undefined;
+  create():Observable<%Model_NAME%> {
+    return of(MOCK_%MODEL_NAME%_MODELS[0]);
+  }
+
+  update(): Observable<%Model_NAME%> {
+    return of(MOCK_%MODEL_NAME%_MODELS[0]);
+  }
+
+  delete(id: string): Observable<boolean> {
+    return of(true);
   }
 }

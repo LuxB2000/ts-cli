@@ -6,26 +6,31 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
-import { of } from 'rxjs';
+import { of, throwError} from 'rxjs';
 import { %Models_NAME%Service } from './%model_NAME%.service';
 import { %Model_NAME%MongoMock } from '../test/mock/%model_NAME%.mock.model';
 import { %Model_NAME%Mapper } from '../mappers/%model_NAME%.mapper';
 import { MOCK_%MODEL_NAME%_DBOS, MOCK_%MODEL_NAME%_MODELS } from '../test/data/%model_NAME%.mock.data';
+import { MockLogger } from '../test/mock/logger.mock';
+import { Logger } from '../tools/logger/logger';
 
 describe('%Models_NAME%Service', () => {
   let service: %Models_NAME%Service;
   let mongoMock: %Model_NAME%MongoMock;
+  let logger: Logger;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         %Models_NAME%Service,
-        {provide: getModelToken('%MODEL_NAME%_MODEL'), useClass: %Model_NAME%MongoMock},
+        {provide: '%MODEL_NAME%_MODEL', useClass: %Model_NAME%MongoMock},
+        {provide: Logger, useClass: MockLogger},
       ],
     }).compile();
 
     service = module.get<%Models_NAME%Service>(%Models_NAME%Service);
-    mongoMock = module.get< %Model_NAME%MongoMock>(getModelToken('%MODEL_NAME%_MODEL'));
+    mongoMock = module.get< %Model_NAME%MongoMock>('%MODEL_NAME%_MODEL');
+    logger = module.get<Logger>(Logger);
   });
 
   describe('constructor', () => {
@@ -39,6 +44,7 @@ describe('%Models_NAME%Service', () => {
     it('should call %Model_NAME%Mapper.createDBO with expected input', async() => {
       let error;
       let response;
+      jest.spyOn(mongoMock, 'create').mockResolvedValue(MOCK_%MODEL_NAME%_DBOS[0]);
       const spy = jest.spyOn(%Model_NAME%Mapper, 'createDBO').mockReturnValue(MOCK_%MODEL_NAME%_DBOS[0]);
       await service.create(user).subscribe(
         res => response = res,
@@ -55,10 +61,10 @@ describe('%Models_NAME%Service', () => {
         softDeleted: false,
       });
     });
-    it('should call the Model.save() function', async() => {
+    it('should call the Model.create() function', async() => {
       let error;
       let response;
-      const spy = jest.spyOn(Model.prototype, 'save').mockReturnThis();
+      const spy = jest.spyOn(mongoMock, 'create').mockResolvedValue(MOCK_%MODEL_NAME%_DBOS[0]);
       await service.create(user).subscribe(
         res => response = res,
         err => error = err,
@@ -78,6 +84,20 @@ describe('%Models_NAME%Service', () => {
       expect(error).toBeUndefined();
       expect(response).not.toBeUndefined();
       expect(spy).toHaveBeenCalledTimes(1);
+    });
+    it(`should return and log an error if the repository throw an error`, async () => {
+      let error;
+      let response;
+      const errorMsg = 'some error';
+      jest.spyOn(mongoMock, 'create').mockRejectedValue(new Error(errorMsg));
+      const loggerSpy = jest.spyOn(logger, 'error');
+      await service.create(user).subscribe(
+        res => response = res,
+        err => error = err,
+      );
+      expect(error).not.toBeUndefined();
+      expect(response).toBeUndefined();
+      expect(loggerSpy).toHaveBeenCalledTimes(1);
     });
   });
   describe('getAll', () => {
@@ -107,6 +127,21 @@ describe('%Models_NAME%Service', () => {
       expect(response).not.toBeUndefined();
       expect(spy).toHaveBeenCalled(); // why is this function called 3x?
     });
+    it(`should throw an error and log an error if the repository emits an error`, async () => {
+      let error;
+      let response;
+      const errorMsg = 'some error';
+      jest.spyOn(%Model_NAME%MongoMock.prototype, 'find').mockRejectedValue(new Error(errorMsg));
+      const loggerSpy = jest.spyOn(logger, 'error');
+      await service.getAll().subscribe(
+        res => response = res,
+        err => error = err,
+      );
+      expect(error).not.toBeUndefined();
+      expect(response).toBeUndefined();
+      expect(error.message).toEqual(errorMsg);
+      expect(loggerSpy).toHaveBeenCalledWith(errorMsg, undefined); // no trace define yet
+    });
   });
   describe('getById', () => {
     const id = `abc`;
@@ -123,7 +158,7 @@ describe('%Models_NAME%Service', () => {
       expect(findOneSpy).toHaveBeenCalledTimes(1);
       expect(findOneSpy).toHaveBeenCalledWith({ _id: 'abc' });
     });
-    it(`should map the found DBO to a model and return it`, async () => {
+    it(`should map the found DBO to a data and return it`, async () => {
       let response;
       let error;
       const mapperSpy = jest.spyOn(%Model_NAME%Mapper, 'fromDBO').mockReturnValue(MOCK_%MODEL_NAME%_MODELS[0]);
@@ -139,4 +174,82 @@ describe('%Models_NAME%Service', () => {
       expect(response).toEqual(MOCK_%MODEL_NAME%_MODELS[0]);
     });
   });
+  describe('update', () => {
+    const data = { ...MOCK_%MODEL_NAME%_MODELS[0] };
+    it(`should call repository.findOneAndUpdate() with the correct params`, async () => {
+      let response;
+      let error;
+      const updateSpy = jest.spyOn(mongoMock, 'findOneAndUpdate');
+      await service.update(data).subscribe(
+        res => response = res,
+        err => error = err,
+      );
+      expect(error).toBeUndefined();
+      expect(response).not.toBeUndefined();
+      expect(updateSpy).toHaveBeenCalledTimes(1);
+      expect(updateSpy).toHaveBeenCalledWith({ _id: MOCK_%MODEL_NAME%_MODELS[0].id  }, { ...data });
+    });
+    it(`should return the provided data`, async () => {
+      let response;
+      let error;
+      await service.update(data).subscribe(
+        res => response = res,
+        err => error = err,
+      );
+      expect(error).toBeUndefined();
+      expect(response).not.toBeUndefined();
+      expect(response).toEqual(data);
+    });
+    it(`should throw an Error if an error happens`, async () => {
+      let response;
+      let error;
+      const errorMsg = 'some error';
+      const updateSpy = jest.spyOn(mongoMock, 'findOneAndUpdate').mockRejectedValue(new Error(errorMsg));
+      const loggerSpy = jest.spyOn(logger, 'error');
+      await service.update(data).subscribe(
+        res => response = res,
+        err => error = err,
+      );
+      expect(response).toBeUndefined();
+      expect(error).not.toBeUndefined();
+      expect(error).toBeInstanceOf(Error);
+      expect(error.message).toEqual('some error');
+      expect(loggerSpy).toHaveBeenCalledWith(errorMsg, undefined); // no trace define yet
+    });
+  });
+
+  describe('delete', () => {
+    const id = 'abc';
+    it('should call the modele.deleteOne function', async () => {
+      let response;
+      let error;
+      const registoryMock = jest.spyOn(mongoMock, 'deleteOne').mockResolvedValue({
+        n: 1,
+        ok: 1,
+        deletedCount: 1,
+      });
+      await service.delete(id).subscribe(
+        res => response = res,
+        err => error = err,
+      );
+      expect(response).not.toBeUndefined();
+      expect(error).toBeUndefined();
+      expect(response).toEqual(true);
+      expect(registoryMock).toHaveBeenCalledWith({_id: id});
+    });
+    it('should throw and log an error if the modele.deleteOne thrown an error', async () => {
+      let response;
+      let error;
+      const errorMsg = 'some error';
+      jest.spyOn(mongoMock, 'deleteOne').mockRejectedValue(new Error(errorMsg));
+      const loggerSpy = jest.spyOn(logger, 'error');
+      await service.delete(id).subscribe(
+        res => response = res,
+        err => error = err,
+      );
+      expect(response).toBeUndefined();
+      expect(error).not.toBeUndefined();
+      expect(loggerSpy).toHaveBeenCalledWith(`${errorMsg}`, undefined);
+    });
+  })
 });
