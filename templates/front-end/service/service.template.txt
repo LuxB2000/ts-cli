@@ -3,13 +3,39 @@
  * It contains a service making URL calls to a backend, managing the %Model_NAME% ressource.
  */
 
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { EMPTY, Observable } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { %Model_NAME% } from 'src/app/models/%model_NAME%';
 
 @Injectable({
   providedIn: 'root'
 })
 export class %Models_NAME%Service {
 
-  constructor() {}
+  constructor(
+    private readonly http: HttpClient,
+    @Inject('API_%MODELS_NAME%_URL') private readonly apiUrl: string,
+  ) {}
+
+  /**
+   * Processes any error found during the http requests
+   */
+  errorPipe(error) {
+    console.log(error.message);
+  }
+
+  /**
+   * Returns an observable containing all the %Model_NAME% models
+   */
+  getAll(): Observable<%Model_NAME%[]> {
+    return this.http.get<%Model_NAME%[]>(`${this.apiUrl}`).pipe(
+      catchError(err => {
+        this.errorPipe(err);
+        return EMPTY;
+      }),
+    );
+  }
 }
 
