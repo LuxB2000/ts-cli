@@ -19,7 +19,7 @@ const qEnd = [
     name: 'end',
     type: 'input',
     message: `Which 'End' BE|fe `,
-    default: 'be',
+    default: 'fe',
     validate: function( value ) {
       if (value.toLowerCase() === 'fe' || value.toLowerCase() === 'be') {
         return true;
@@ -30,6 +30,9 @@ const qEnd = [
   },
 ];
 
+/**
+ * Back End types and CLI questions
+ */
 const availableTypes = ['service', 's', 'model', 'm', 'controller', 'c'];
 const qBE = [
   {
@@ -41,7 +44,7 @@ const qBE = [
       if (availableTypes.indexOf(value) !== -1) {
         return true;
       } else {
-        return `Possible choices are 'model', 'service'`;
+        return `Possible choices are 'model', 'service' and 'constroller'`;
       }
     },
   },
@@ -59,6 +62,37 @@ const qBE = [
   }
 ];
 
+/**
+ * Front End types and CLI questions
+ */
+const feAvailableTypes = ['model', 'm', 'service', 's', 'listPage', 'lp'];
+const qFE = [
+  {
+    name: 'type',
+    type: 'input',
+    message: 'What is the type of file?',
+    default: 'model',
+    valide: (value) => {
+      if (feAvailableTypes.indexOf(value) !== -1) {
+        return true;
+      }
+      return `Possible choices are: 'model' (m), 'service' (s) and 'listPage' (lp)'`
+    }
+  },
+  {
+    name: 'modelName',
+    type: 'input',
+    message: 'What is the name of the ressource?',
+    default: 'actor',
+    validate: (value) => {
+      if (value.trim().length === 0) {
+        return 'You need to specify a name of the ressource';
+      }
+      return true;
+    }
+  }
+];
+
 let PATH = process.env.CLIPATH || process.cwd();
 
 /**
@@ -68,8 +102,8 @@ let PATH = process.env.CLIPATH || process.cwd();
 /**
  * // DEBUG
  */
-
-const templatePath = process.cwd() + '/templates';
+//console.log(`\n>> Current index.js directory: ${__dirname}\n`);
+const templatePath = path.join(__dirname, 'templates');
 const templates = [];
 // main function
 const run = async () => {
@@ -85,7 +119,7 @@ const run = async () => {
     data.end = {
       name: aEnd.end
     };
-    if (aEnd.end === 'be') {
+    if (data.end.name === 'be') {
       // Back End: NestJS
       
       // collect data
@@ -234,8 +268,35 @@ const run = async () => {
           });
         }
       }
-    } else {
+    } else if(data.end.name === 'fe') {
       // Front End: Angular
+      // collect data
+      const aFE = await inquirer.prompt(qFE);
+      data.end.path = 'front-end';
+      data.type = {
+        name: aFE.type,
+      };
+      console.log(data);
+      const _name = aFE.modelName.trim().toLowerCase();
+      data.names = {
+        input: aFE.modelName,
+        name: _name,
+        names: _name + 's',
+        Name: _name.slice(0, 1).toUpperCase() + _name.slice(1, _name.length),
+        Names: _name.slice(0, 1).toUpperCase() + _name.slice(1, _name.length) + 's',
+        NAME: _name.toUpperCase(),
+        NAMES: _name.toUpperCase() + 'S', 
+      };
+      // -- manage the model --
+      if (data.type.name === 'model' || data.type.name === 'm') {
+        // create a single model file
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), 'models'), 'model.template.txt')).toString(),
+          path: path.join($path, `models`),
+          fileName: `${data.names.name}.ts`,
+        });
+        // create a mock data
+      }
     }
 
     // console.log(templates);
@@ -253,105 +314,108 @@ const run = async () => {
       text = text.replace(/%Models_NAME%/g, data.names.Names);
       text = text.replace(/%MODEL_NAME%/g, data.names.NAME);
       text = text.replace(/%MODELS_NAME%/g, data.names.NAMES);
-      text = text.replace(/%DATABASE_NAME%/g, data.database.dbName);
+      if (data.end.name === 'be') {
+        text = text.replace(/%DATABASE_NAME%/g, data.database.dbName);
+      }
       fs.writeFileSync(path.join(template.path, template.fileName), text);
     }
     console.log(`... files generation done`);
     console.log(`appModule modifications ...`);
     // add the dependencies to the App module
-    let strToFind;
-    let strToFindInMain = [];
-    const appModule = fs.readFileSync(path.join($path, 'app.module.ts')).toString();
-    const mainFile = fs.readFileSync(path.join($path, 'main.ts')).toString();
-    let strToAddImport;
-    let strToAddDependencies;
-    let strToAddImportInMain = [];
-    let strToAddDependenciesInMain;
-    let shiftInMain = [];
-    if (data.type.name === 'model' || data.type.name === 'm') {
-      strToFind = `providers: [`;
-      strToAddImport =`\n\t\t... ${data.names.Names}Providers,`;
-      strToAddDependencies = `import { ${data.names.Names}Providers } from './providers/${data.names.names}.providers';\n`;
-      if (generateDatabaseProvider) {
-        strToAddImport = `\n\t\t... databaseProviders,` + strToAddImport;
-        strToAddDependencies = `import { databaseProviders } from './providers/database.providers';\n` + strToAddDependencies;
-      }
+    if ( data.end.name === 'be') {
+      let strToFind;
+      let strToFindInMain = [];
+      const appModule = fs.readFileSync(path.join($path, 'app.module.ts')).toString();
+      const mainFile = fs.readFileSync(path.join($path, 'main.ts')).toString();
+      let strToAddImport;
+      let strToAddDependencies;
+      let strToAddImportInMain = [];
+      let strToAddDependenciesInMain;
+      let shiftInMain = [];
       
-    } else if (data.type.name === 'service' || data.type.name === 's') {
-      strToFind = `providers: [`;
-      strToAddImport =`\n\t\t${data.names.Names}Service,`;
-      strToAddDependencies = `import { ${data.names.Names}Service } from './services/${data.names.name}.service';\n`;
-      if (addLogger) {
-        strToFindInMain = [`AppModule);`, `AppModule)`];
-        shiftInMain = [0, -1];
-        strToAddImport +=`\n\t\tLogger,`;
-        strToAddDependencies += `import { Logger } from './tools/logger/logger';\n`;
-        strToAddImportInMain = [
-          `\n\tapp.useLogger(new Logger());`,
-          `, {\n\t\tlogger: ['warn', 'error', 'log', 'debug', 'verbose'],\n\t}`
-        ];
-        strToAddDependenciesInMain = `import { Logger } from './tools/logger/logger';\n`;
+      if (data.type.name === 'model' || data.type.name === 'm') {
+        strToFind = `providers: [`;
+        strToAddImport =`\n\t\t... ${data.names.Names}Providers,`;
+        strToAddDependencies = `import { ${data.names.Names}Providers } from './providers/${data.names.names}.providers';\n`;
+        if (generateDatabaseProvider) {
+          strToAddImport = `\n\t\t... databaseProviders,` + strToAddImport;
+          strToAddDependencies = `import { databaseProviders } from './providers/database.providers';\n` + strToAddDependencies;
+        }
+        
+      } else if (data.type.name === 'service' || data.type.name === 's') {
+        strToFind = `providers: [`;
+        strToAddImport =`\n\t\t${data.names.Names}Service,`;
+        strToAddDependencies = `import { ${data.names.Names}Service } from './services/${data.names.name}.service';\n`;
+        if (addLogger) {
+          strToFindInMain = [`AppModule);`, `AppModule)`];
+          shiftInMain = [0, -1];
+          strToAddImport +=`\n\t\tLogger,`;
+          strToAddDependencies += `import { Logger } from './tools/logger/logger';\n`;
+          strToAddImportInMain = [
+            `\n\tapp.useLogger(new Logger());`,
+            `, {\n\t\tlogger: ['warn', 'error', 'log', 'debug', 'verbose'],\n\t}`
+          ];
+          strToAddDependenciesInMain = `import { Logger } from './tools/logger/logger';\n`;
+        }
+      } else if (data.type.name === 'controller' || data.type.name === 'c') {
+        strToFind = `controllers: [`;
+        strToAddImport =`\n\t\t${data.names.Names}Controller,`;
+        strToAddDependencies = `import { ${data.names.Names}Controller } from './controllers/${data.names.name}.controller';\n`;
       }
-    } else if (data.type.name === 'controller' || data.type.name === 'c') {
-      strToFind = `controllers: [`;
-      strToAddImport =`\n\t\t${data.names.Names}Controller,`;
-      strToAddDependencies = `import { ${data.names.Names}Controller } from './controllers/${data.names.name}.controller';\n`;
-    }
-    const index = appModule.indexOf(strToFind);
-    if (index >= 0) {
-      // modify the file
-      // add new element to module
-      let newAppModule = appModule;
-      if (newAppModule.indexOf(strToAddImport.trim()) === -1) {
-        newAppModule = appModule.slice(0, index + strToFind.length) +
-          strToAddImport +
-          appModule.slice(index + strToFind.length, appModule.length);
+      const index = appModule.indexOf(strToFind);
+      if (index >= 0) {
+        // modify the file
+        // add new element to module
+        let newAppModule = appModule;
+        if (newAppModule.indexOf(strToAddImport.trim()) === -1) {
+          newAppModule = appModule.slice(0, index + strToFind.length) +
+            strToAddImport +
+            appModule.slice(index + strToFind.length, appModule.length);
+        }
+        // add the dependencies
+        // look for the last import line
+        let indexImport = newAppModule.lastIndexOf('import {');
+        indexImport = newAppModule.indexOf('\n', indexImport);
+        if (newAppModule.indexOf(strToAddDependencies.trim()) === -1) {
+          newAppModule = newAppModule.slice(0, indexImport + 1) + 
+            strToAddDependencies +
+            newAppModule.slice(indexImport, newAppModule.length);
+        }
+        // write the new 'app.module' file
+        fs.writeFileSync(path.join($path, 'app.module.ts'), newAppModule);
+      }
+      // update main file
+      let i = 0;
+      let newMain = mainFile;
+      for (i = 0; i < strToFindInMain.length; i++) {
+        const index = mainFile.indexOf(strToFindInMain[i]);
+        if (index >= 0) {
+          if (newMain.indexOf(strToAddImportInMain[i].trim()) === -1) {
+            newMain = newMain.slice(0, index + strToFindInMain[i].length + shiftInMain[i]) +
+              strToAddImportInMain[i] +
+              newMain.slice(index + strToFindInMain[i].length + shiftInMain[i], newMain.length);
+          }
+        }
       }
       // add the dependencies
       // look for the last import line
-      let indexImport = newAppModule.lastIndexOf('import {');
-      indexImport = newAppModule.indexOf('\n', indexImport);
-      if (newAppModule.indexOf(strToAddDependencies.trim()) === -1) {
-        newAppModule = newAppModule.slice(0, indexImport + 1) + 
-          strToAddDependencies +
-          newAppModule.slice(indexImport, newAppModule.length);
-      }
-      // write the new 'app.module' file
-      fs.writeFileSync(path.join($path, 'app.module.ts'), newAppModule);
-    }
-    // update main file
-    let i = 0;
-    let newMain = mainFile;
-    for (i = 0; i < strToFindInMain.length; i++) {
-      const index = mainFile.indexOf(strToFindInMain[i]);
-      if (index >= 0) {
-        if (newMain.indexOf(strToAddImportInMain[i].trim()) === -1) {
-          newMain = newMain.slice(0, index + strToFindInMain[i].length + shiftInMain[i]) +
-            strToAddImportInMain[i] +
-            newMain.slice(index + strToFindInMain[i].length + shiftInMain[i], newMain.length);
+      let indexImport = newMain.lastIndexOf('import {');
+      indexImport = newMain.indexOf('\n', indexImport);
+      if (strToAddDependenciesInMain && strToAddDependenciesInMain.length > 0) {
+        if (newMain.indexOf(strToAddDependenciesInMain.trim()) === -1) {
+          newMain = newMain.slice(0, indexImport + 1) + 
+            strToAddDependenciesInMain +
+            newMain.slice(indexImport, newMain.length);
         }
-      }
+      }    
+      // write the new 'main.ts' file
+      fs.writeFileSync(path.join($path, 'main.ts'), newMain);
+      console.log(`... appModule modifications done`);
     }
-    // add the dependencies
-    // look for the last import line
-    let indexImport = newMain.lastIndexOf('import {');
-    indexImport = newMain.indexOf('\n', indexImport);
-    if (strToAddDependenciesInMain && strToAddDependenciesInMain.length > 0) {
-      if (newMain.indexOf(strToAddDependenciesInMain.trim()) === -1) {
-        newMain = newMain.slice(0, indexImport + 1) + 
-          strToAddDependenciesInMain +
-          newMain.slice(indexImport, newMain.length);
-      }
-    }    
-    // write the new 'main.ts' file
-    fs.writeFileSync(path.join($path, 'main.ts'), newMain);
-    console.log(`... appModule modifications done`);
   } catch (error) {
     console.log(chalk.red('Error during the process.'));
     console.log(error);
   }
-
-  
 };
 
 clear();

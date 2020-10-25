@@ -4,7 +4,7 @@
  * The default properties are id and creationDate.
  */
 
- import { %Model_NAME% } from "../models/%model_NAME%.model";
+import { %Model_NAME% } from "../models/%model_NAME%.model";
 
 export interface %Model_NAME%DTO {
   id: string;
@@ -15,5 +15,5 @@ export interface Paginated%Model_NAME%DTO {
   pageIndex:  number;
   pageSize:   number;
   totalCount: number;
-  %models_NAME%: %Model_NAME%[]
+  %models_NAME%: %Model_NAME%[];
 }

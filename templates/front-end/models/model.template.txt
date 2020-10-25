@@ -1,0 +1,9 @@
+/**
+ * This file has been generated using TS-CLI.
+ * This file contains the %Model_NAME% model.
+ */
+
+export interface %Model_NAME% {
+  creationDate: Date;
+  id: string;
+}

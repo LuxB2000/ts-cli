@@ -34,6 +34,14 @@ npm run test:watch
 ts-cli
 ```
 
+### Front End
+
+```bash
+ng new dummy-angular
+cd dummy-angular/src/app
+npm install
+```
+
 You can now access the TS-CLI from anywhere on your station.
 
 ## Help
