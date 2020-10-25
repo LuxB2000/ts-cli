@@ -1,0 +1,21 @@
+/**
+ * This file has been generated using TS-CLI.
+ * It contains the complete UT of service making URL calls to a backend
+ */
+
+import { TestBed } from '@angular/core/testing';
+
+import { %Models_NAME%Service } from './%models_NAME%.service';
+
+describe('%Models_NAME%Service', () => {
+  let service: %Models_NAME%Service;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(%Models_NAME%Service);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});

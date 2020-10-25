@@ -71,7 +71,7 @@ const qFE = [
     name: 'type',
     type: 'input',
     message: 'What is the type of file?',
-    default: 'model',
+    default: 'service',
     valide: (value) => {
       if (feAvailableTypes.indexOf(value) !== -1) {
         return true;
@@ -299,7 +299,22 @@ const run = async () => {
         templates.push({
           file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), 'models'), 'model.mock.template.txt')).toString(),
           path: path.join(path.join(path.join($path,'src'), 'test'), 'mock'),
-          fileName: `${data.names.name}.ts`,
+          fileName: `${data.names.name}.mock.ts`,
+        });
+      }
+      // -- manage the service --
+      if (data.type.name === 'service' || data.type.name === 's') {
+        // the service
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), 'service'), 'service.template.txt')).toString(),
+          path: path.join(path.join(path.join(path.join($path,'src'), 'app'), 'services'), `${data.names.name}`),
+          fileName: `${data.names.names}.service.ts`,
+        });
+        // the tests
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), 'service'), 'service.test.template.txt')).toString(),
+          path: path.join(path.join(path.join(path.join($path,'src'), 'app'), 'services'), `${data.names.name}`),
+          fileName: `${data.names.names}.service.spec.ts`,
         });
       }
     }
