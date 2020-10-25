@@ -292,10 +292,15 @@ const run = async () => {
         // create a single model file
         templates.push({
           file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), 'models'), 'model.template.txt')).toString(),
-          path: path.join($path, `models`),
+          path: path.join(path.join(path.join($path,'src'), 'app'), `models`),
           fileName: `${data.names.name}.ts`,
         });
         // create a mock data
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), 'models'), 'model.mock.template.txt')).toString(),
+          path: path.join(path.join(path.join($path,'src'), 'test'), 'mock'),
+          fileName: `${data.names.name}.ts`,
+        });
       }
     }
 

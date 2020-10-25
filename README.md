@@ -38,7 +38,7 @@ ts-cli
 
 ```bash
 ng new dummy-angular
-cd dummy-angular/src/app
+cd dummy-angular # Note, we point the main moddule.app file
 npm install
 ```
 
@@ -53,3 +53,4 @@ You can now access the TS-CLI from anywhere on your station.
 - front end
 - parse a model files and introduce properties in templates
 - makes the index.js in typescript
+- switch Models_NAME -> MODEL_Names, etc.
