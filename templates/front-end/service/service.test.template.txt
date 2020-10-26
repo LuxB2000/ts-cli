@@ -4,18 +4,48 @@
  */
 
 import { TestBed } from '@angular/core/testing';
-
+import { HttpClientTestingModule,
+         HttpTestingController } from '@angular/common/http/testing';
+ 
 import { %Models_NAME%Service } from './%models_NAME%.service';
+import { MOCK_%MODEL_NAME%_MODELS } from './../../../test/%model_NAME%.mock';
 
 describe('%Models_NAME%Service', () => {
   let service: %Models_NAME%Service;
+  let httpTestingController: HttpTestingController;
+  const BASEURL = '/api/actor';
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: 'API_%MODELS_NAME%_URL', useValue: BASEURL },
+      ],
+      imports: [ HttpClientTestingModule ],
+    });
     service = TestBed.inject(%Models_NAME%Service);
+    httpTestingController = TestBed.get(HttpTestingController);
   });
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
+  describe('constructor', () => {
+    it('should be created', () => {
+      expect(service).toBeTruthy();
+    });
+  });
+
+  describe('getAll', () => {
+    it('should call the expected Url', async () => {
+      let response;
+      let error;
+      await service.getAll().subscribe(
+        resp => response = resp,
+        err => error = err,
+      );
+      const req = httpTestingController.expectOne(BASEURL);
+      req.flush(MOCK_%MODEL_NAME%_MODELS);
+      expect(error).toBeUndefined();
+      expect(response).toEqual(MOCK_%MODEL_NAME%_MODELS);
+    });
+    it('should return an Observable with expected models', async () => {});
+    it(`should call 'errorCathing' function if an error is catched`, async () => {});
   });
 });

@@ -22,7 +22,7 @@ export class %Models_NAME%Service {
   /**
    * Processes any error found during the http requests
    */
-  errorPipe(error) {
+  errorCathing(error) {
     console.log(error.message);
   }
 
@@ -32,7 +32,7 @@ export class %Models_NAME%Service {
   getAll(): Observable<%Model_NAME%[]> {
     return this.http.get<%Model_NAME%[]>(`${this.apiUrl}`).pipe(
       catchError(err => {
-        this.errorPipe(err);
+        this.errorCathing(err);
         return EMPTY;
       }),
     );
