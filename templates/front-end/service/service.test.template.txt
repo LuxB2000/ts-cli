@@ -37,6 +37,38 @@ describe('%Models_NAME%Service', () => {
     });
   });
 
+  describe('create', () => {
+    it('should call the expected Url', async () => {
+      let response;
+      let error;
+      const data = MOCK_%MODEL_NAME%_MODELS[0];
+      await service.create(data).subscribe(
+        resp => response = resp,
+        err => error = err,
+      );
+      const req = httpTestingController.expectOne(`${BASEURL}`);
+      req.flush(data);
+      expect(error).toBeUndefined();
+      expect(response).toEqual(data);
+      expect(req.request.method).toEqual('POST');
+    });
+    it(`should call 'errorCathing' function and return 'EMPTY' if an error is catched`, async () => {
+      let response;
+      let error;
+      const mockErrorResponse = { status: 400, statusText: 'Bad Request' };
+      const dataInput = MOCK_%MODEL_NAME%_MODELS[0];
+      const data = 'Invalid request parameters';
+      await service.create(dataInput).subscribe(
+        resp => response = resp,
+        err => error = err,
+      );
+      const req = httpTestingController.expectOne(`${BASEURL}`);
+      req.flush(data, mockErrorResponse);
+      expect(error).toBeUndefined();
+      expect(response).toBeUndefined();
+    });
+  });
+
   describe('getAll', () => {
     it('should call the expected Url', async () => {
       let response;
@@ -62,6 +94,103 @@ describe('%Models_NAME%Service', () => {
         err => error = err,
       );
       const req = httpTestingController.expectOne(BASEURL);
+      req.flush(data, mockErrorResponse);
+      expect(error).toBeUndefined();
+      expect(response).toBeUndefined();
+    });
+  });
+
+  describe('getById', () => {
+    it('should call the expected Url', async () => {
+      let response;
+      let error;
+      const id = 'abc';
+      const data = MOCK_%MODEL_NAME%_MODELS;
+      await service.getById(id).subscribe(
+        resp => response = resp,
+        err => error = err,
+      );
+      const req = httpTestingController.expectOne(`${BASEURL}/${id}`);
+      req.flush(data);
+      expect(error).toBeUndefined();
+      expect(response).toEqual(data);
+      expect(req.request.method).toEqual('GET');
+    });
+    it(`should call 'errorCathing' function and return 'EMPTY' if an error is catched`, async () => {
+      let response;
+      let error;
+      const id = 'abc';
+      const mockErrorResponse = { status: 400, statusText: 'Bad Request' };
+      const data = 'Invalid request parameters';
+      await service.getById(id).subscribe(
+        resp => response = resp,
+        err => error = err,
+      );
+      const req = httpTestingController.expectOne(`${BASEURL}/${id}`);
+      req.flush(data, mockErrorResponse);
+      expect(error).toBeUndefined();
+      expect(response).toBeUndefined();
+    });
+  });
+
+  describe('update', () => {
+    it('should call the expected Url', async () => {
+      let response;
+      let error;
+      const data = MOCK_%MODEL_NAME%_MODELS[0];
+      await service.update(data).subscribe(
+        resp => response = resp,
+        err => error = err,
+      );
+      const req = httpTestingController.expectOne(`${BASEURL}/${data.id}`);
+      req.flush(data);
+      expect(error).toBeUndefined();
+      expect(response).toEqual(data);
+      expect(req.request.method).toEqual('PUT');
+    });
+    it(`should call 'errorCathing' function and return 'EMPTY' if an error is catched`, async () => {
+      let response;
+      let error;
+      const mockErrorResponse = { status: 400, statusText: 'Bad Request' };
+      const dataInput = MOCK_%MODEL_NAME%_MODELS[0];
+      const data = 'Invalid request parameters';
+      await service.update(dataInput).subscribe(
+        resp => response = resp,
+        err => error = err,
+      );
+      const req = httpTestingController.expectOne(`${BASEURL}/${dataInput.id}`);
+      req.flush(data, mockErrorResponse);
+      expect(error).toBeUndefined();
+      expect(response).toBeUndefined();
+    });
+  });
+
+  describe('delete', () => {
+    it('should call the expected Url', async () => {
+      let response;
+      let error;
+      const data = MOCK_%MODEL_NAME%_MODELS[0];
+      await service.delete(data.id).subscribe(
+        resp => response = resp,
+        err => error = err,
+      );
+      const req = httpTestingController.expectOne(`${BASEURL}/${data.id}`);
+      req.flush(data);
+      expect(error).toBeUndefined();
+      expect(response).toEqual(data);
+      expect(req.request.method).toEqual('DELETE');
+    });
+    it(`should call 'errorCathing' function and return 'EMPTY' if an error is catched`, async () => {
+      let response;
+      let error;
+      const mockErrorResponse = { status: 400, statusText: 'Bad Request' };
+      const dataInput = MOCK_%MODEL_NAME%_MODELS[0];
+      const data = 'Invalid request parameters';
+      await service.delete(dataInput.id).subscribe(
+        resp => response = resp,
+        err => error = err,
+      );
+      const req = httpTestingController.expectOne(`${BASEURL}/${dataInput.id}`);
       req.flush(data, mockErrorResponse);
       expect(error).toBeUndefined();
       expect(response).toBeUndefined();

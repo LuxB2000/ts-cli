@@ -28,10 +28,62 @@ export class %Models_NAME%Service {
   }
 
   /**
+   * Creates and record a %Model_NAME% in BE.
+   * It returns an observable containning the created %Model_NAME% model.
+   */
+  create(model: %Model_NAME%) {
+    return this.http.post(`${this.apiUrl}`, model).pipe(
+      catchError(err => {
+        this.errorCatching(err);
+        return EMPTY;
+      }),
+    );
+  }
+
+  /**
    * Returns an observable containing all the %Model_NAME% models
    */
   getAll(): Observable<%Model_NAME%[]> {
     return this.http.get<%Model_NAME%[]>(`${this.apiUrl}`).pipe(
+      catchError(err => {
+        this.errorCatching(err);
+        return EMPTY;
+      }),
+    );
+  }
+
+  /**
+   * Returns an observable containning %Model_NAME% model corresponding to the input id
+   * @param id the unique identifier of the output model
+   */
+  getById(id: string): Observable<%Model_NAME%> {
+    return this.http.get<%Model_NAME%>(`${this.apiUrl}/${id}`).pipe(
+      catchError(err => {
+        this.errorCatching(err);
+        return EMPTY;
+      }),
+    );
+  }
+
+  /**
+   * Update a %Model_NAME% model and returns an observable containning the
+   * updated model version. 
+   */
+  update(model: %Model_NAME%): Observable<%Model_NAME%> {
+    return this.http.put<%Model_NAME%>(`${this.apiUrl}/${model.id}`, model).pipe(
+      catchError(err => {
+        this.errorCatching(err);
+        return EMPTY;
+      }),
+    );
+  }
+
+  /**
+   * Deletes a %Model_NAME% model and returns an observable of boolean.
+   * False is return in case of error in BE process.
+   */
+  delete(id: string): Observable<boolean> {
+    return this.http.delete<boolean>(`${this.apiUrl}/${id}`).pipe(
       catchError(err => {
         this.errorCatching(err);
         return EMPTY;
