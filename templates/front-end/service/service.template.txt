@@ -5,7 +5,7 @@
 
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { EMPTY, Observable } from 'rxjs';
+import { EMPTY, Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { %Model_NAME% } from 'src/app/models/%model_NAME%';
 
@@ -22,8 +22,9 @@ export class %Models_NAME%Service {
   /**
    * Processes any error found during the http requests
    */
-  errorCathing(error) {
+  errorCatching(error): Observable<any> {
     console.log(error.message);
+    return throwError(error);
   }
 
   /**
@@ -32,7 +33,7 @@ export class %Models_NAME%Service {
   getAll(): Observable<%Model_NAME%[]> {
     return this.http.get<%Model_NAME%[]>(`${this.apiUrl}`).pipe(
       catchError(err => {
-        this.errorCathing(err);
+        this.errorCatching(err);
         return EMPTY;
       }),
     );
