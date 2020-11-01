@@ -5,7 +5,7 @@
 
 import { %Model_NAME% } from '../../app/models/%model_NAME%';
 
-export const MOCK_%MODEL_NAME%: %Model_NAME%[] = [
+export const MOCK_%MODEL_NAME%_MODELS: %Model_NAME%[] = [
   {
     creationDate: new Date(Date.now()),
     id: 'abc',

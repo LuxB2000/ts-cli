@@ -71,7 +71,7 @@ const qFE = [
     name: 'type',
     type: 'input',
     message: 'What is the type of file?',
-    default: 'model',
+    default: 'service',
     valide: (value) => {
       if (feAvailableTypes.indexOf(value) !== -1) {
         return true;
@@ -299,7 +299,22 @@ const run = async () => {
         templates.push({
           file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), 'models'), 'model.mock.template.txt')).toString(),
           path: path.join(path.join(path.join($path,'src'), 'test'), 'mock'),
-          fileName: `${data.names.name}.ts`,
+          fileName: `${data.names.name}.mock.ts`,
+        });
+      }
+      // -- manage the service --
+      if (data.type.name === 'service' || data.type.name === 's') {
+        // the service
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), 'service'), 'service.template.txt')).toString(),
+          path: path.join(path.join(path.join(path.join($path,'src'), 'app'), 'services'), `${data.names.name}`),
+          fileName: `${data.names.names}.service.ts`,
+        });
+        // the tests
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(templatePath, `${data.end.path}`), 'service'), 'service.test.template.txt')).toString(),
+          path: path.join(path.join(path.join(path.join($path,'src'), 'app'), 'services'), `${data.names.name}`),
+          fileName: `${data.names.names}.service.spec.ts`,
         });
       }
     }
@@ -416,6 +431,34 @@ const run = async () => {
       // write the new 'main.ts' file
       fs.writeFileSync(path.join($path, 'main.ts'), newMain);
       console.log(`... appModule modifications done`);
+    }
+    // add the dependencies to the App Module
+    if (data.end.name === 'fe') {
+      // add the API_URL to the app.module
+      const appModulePath = path.join(path.join(path.join($path, 'src'), 'app'), 'app.module.ts');
+      let appModule = fs.readFileSync(appModulePath).toString();
+      let strToFind = '';
+      let strToImport = '';
+      if (data.type.name === 'service' || data.type.name === 's') {
+        // parse the appModule and find the provider
+        strToFind = 'providers: [';
+        strToImport = `\n    { provide: 'API_${data.names.NAMES}_URL', useValue: '/api/${data.names.name}' },`
+        if (appModule.indexOf('providers: []') !== -1) {
+          strToImport = strToImport + `\n  `;
+        }
+      }
+      // modify the app.module.ts file
+      const index = appModule.indexOf(strToFind);
+      let newAppModule = appModule;
+      if (index >= 0) {
+        // if the app.module does not already contains the string
+        if (newAppModule.indexOf(strToImport) === -1) {
+          newAppModule = newAppModule.slice(0, index + strToFind.length) +
+            strToImport +
+            newAppModule.slice(index + strToFind.length, newAppModule.length);
+        }
+      }
+      fs.writeFileSync(appModulePath, newAppModule);
     }
   } catch (error) {
     console.log(chalk.red('Error during the process.'));
