@@ -361,6 +361,11 @@ const run = async () => {
           path: path.join(path.join(path.join(path.join($path,'src'), 'app'), 'widgets'), `${data.names.names}-list`),
           fileName: `${data.names.names}-list.component.spec.ts`,
         });
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(path.join(templatePath, `${data.end.path}`), 'widgets'), 'models-list'), 'models-list.datasource.template.txt')).toString(),
+          path: path.join(path.join(path.join(path.join($path,'src'), 'app'), 'widgets'), `${data.names.names}-list`),
+          fileName: `${data.names.names}-list.datasource.ts`,
+        });
       }
     }
 
