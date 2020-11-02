@@ -1,0 +1,5 @@
+<mat-card>
+  <mat-card-title> %Models_NAME% </mat-card-title>
+  <mat-card-content>
+  </mat-card-content>
+</mat-card>

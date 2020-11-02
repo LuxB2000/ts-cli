@@ -71,7 +71,7 @@ const qFE = [
     name: 'type',
     type: 'input',
     message: 'What is the type of file?',
-    default: 'service',
+    default: 'page',
     valide: (value) => {
       if (feAvailableTypes.indexOf(value) !== -1) {
         return true;
@@ -317,6 +317,33 @@ const run = async () => {
           fileName: `${data.names.names}.service.spec.ts`,
         });
       }
+      // -- manage the page --
+      if (data.type.name === 'page' || data.type.name === 'p') {
+        // the main page
+        console.log(`-- test --`);
+        console.log(path.join(path.join(path.join(path.join(templatePath, `${data.end.path}`), 'pages'), 'models-component'), 'model.component.template.txt'));
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(path.join(templatePath, `${data.end.path}`), 'pages'), 'models-component'), 'model.component.template.txt')).toString(),
+          path: path.join(path.join(path.join(path.join($path,'src'), 'app'), 'pages'), `${data.names.names}-page`),
+          fileName: `${data.names.names}.component.ts`,
+        });
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(path.join(templatePath, `${data.end.path}`), 'pages'), 'models-component'), 'model.component.template.html.txt')).toString(),
+          path: path.join(path.join(path.join(path.join($path,'src'), 'app'), 'pages'), `${data.names.names}-page`),
+          fileName: `${data.names.names}.component.html`,
+        });
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(path.join(templatePath, `${data.end.path}`), 'pages'), 'models-component'), 'model.component.template.scss.txt')).toString(),
+          path: path.join(path.join(path.join(path.join($path,'src'), 'app'), 'pages'), `${data.names.names}-page`),
+          fileName: `${data.names.names}.component.scss`,
+        });
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(path.join(templatePath, `${data.end.path}`), 'pages'), 'models-component'), 'model.component.template.test.txt')).toString(),
+          path: path.join(path.join(path.join(path.join($path,'src'), 'app'), 'pages'), `${data.names.names}-page`),
+          fileName: `${data.names.names}.component.spec.ts`,
+        });
+        // the table
+      }
     }
 
     // console.log(templates);
@@ -446,6 +473,8 @@ const run = async () => {
         if (appModule.indexOf('providers: []') !== -1) {
           strToImport = strToImport + `\n  `;
         }
+      } else if (data.type.name === 'page' || data.type.name === 'p') {
+
       }
       // modify the app.module.ts file
       const index = appModule.indexOf(strToFind);

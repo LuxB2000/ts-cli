@@ -39,7 +39,9 @@ ts-cli
 ```bash
 ng new dummy-angular
 cd dummy-angular # Note, we point the main moddule.app file
+ng add @angular/material
 npm install
+ts-cli
 ```
 
 You can now access the TS-CLI from anywhere on your station.
