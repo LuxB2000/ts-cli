@@ -1,0 +1,15 @@
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-%models_NAME%-list',
+  templateUrl: './%models_NAME%-list.component.html',
+  styleUrls: ['./%models_NAME%-list.component.scss']
+})
+export class %Models_NAME%ListComponent implements OnInit {
+
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+
+}
