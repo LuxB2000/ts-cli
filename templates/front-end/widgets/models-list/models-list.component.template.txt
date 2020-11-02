@@ -9,7 +9,7 @@ import { %Models_NAME%ListDataSrouce } from './%models_NAME%-list.datasource';
 })
 export class %Models_NAME%ListComponent implements OnInit {
 
-  public columnsName = ['id', 'creationDate'];
+  public columnsName = ['id', 'creationDate', 'actions'];
   public dataSource: %Models_NAME%ListDataSrouce;
 
   constructor(

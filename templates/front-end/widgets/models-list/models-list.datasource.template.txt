@@ -6,8 +6,6 @@ export class %Models_NAME%ListDataSrouce {
 
   private %models_NAME%: BehaviorSubject<%Model_NAME%[]>;
 
-  private dummyData = [{id: 'abc', creationDate: new Date(2020, 1, 12)}, {id: 'def', creationDate: new Date(2020, 1, 10)}]
-
   constructor(
     private readonly %models_NAME%Service: %Models_NAME%Service,
   ) {
@@ -22,8 +20,14 @@ export class %Models_NAME%ListDataSrouce {
     this.%models_NAME%.complete();
   }
 
+  /**
+   * Load all the data from the service
+   */
   loadData() {
-    this.%models_NAME%.next(this.dummyData);
+    this.%models_NAME%Service.getAll().pipe().subscribe(
+      (res: Actor[]) => this.%models_NAME%.next(res),
+      err => console.error(err),
+    );
   }
   
 }
