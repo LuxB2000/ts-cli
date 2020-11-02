@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { %Models_NAME%Service } from 'src/app/services/actor/%models_NAME%.service';
+import { %Models_NAME%ListDataSrouce } from './%models_NAME%-list.datasource';
 
 @Component({
   selector: 'app-%models_NAME%-list',
@@ -7,9 +9,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class %Models_NAME%ListComponent implements OnInit {
 
-  constructor() { }
+  public columnsName = ['id', 'creationDate'];
+  public dataSource: %Models_NAME%ListDataSrouce;
+
+  constructor(
+    private readonly %models_NAME%Service: %Models_NAME%Service,
+  ) {
+    this.dataSource = new %Models_NAME%ListDataSrouce(this.%models_NAME%Service);
+  }
 
   ngOnInit(): void {
+    this.dataSource.loadData();
   }
 
 }
