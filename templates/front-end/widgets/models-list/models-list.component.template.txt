@@ -19,7 +19,34 @@ export class %Models_NAME%ListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.refresh();
+  }
+
+  /**
+   * Refresh the data
+   */
+  public refresh(): void {
     this.dataSource.loadData();
+  }
+
+  /**
+   * delete a %Model_NAME% model based on its ID
+   */
+  public delete(id: string) {
+    this.%models_NAME%Service.delete(id).subscribe(
+      res => {
+        if (res && res === true) {
+          console.log('element deleted');
+        } else {
+          console.log('element not deleted');
+        }
+        this.refresh();
+      },
+      err => {
+        console.error(`error while deleting ${id}`);
+        console.error(err);
+      }
+    );
   }
 
 }

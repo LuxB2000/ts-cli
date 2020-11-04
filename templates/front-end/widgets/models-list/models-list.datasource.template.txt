@@ -29,5 +29,5 @@ export class %Models_NAME%ListDataSrouce {
       err => console.error(err),
     );
   }
-  
+
 }

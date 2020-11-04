@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+
+import { %Models_NAME%Service } from 'src/app/services/%model_NAME%/%models_NAME%.service';
+import { %Models_NAME%ListComponent } from 'src/app/widgets/%models_NAME%-list/%models_NAME%-list.component';
 
 @Component({
   selector: 'app-%model_NAME%s-page',
@@ -7,9 +10,31 @@ import { Component, OnInit } from '@angular/core';
 })
 export class %Models_NAME%Component implements OnInit {
 
-  constructor() { }
+  @ViewChild(%Models_NAME%ListComponent) listApp: %Models_NAME%ListComponent;
+  constructor(
+    private readonly %models_NAME%Service: %Models_NAME%Service,
+  ) { }
 
   ngOnInit(): void {
+  }
+
+  /**
+   * Creates a %Models_NAME%Component
+   * @TODO: open a dedicated widget
+   */
+  create(): void {
+    console.log('create');
+    // @TODO here call a widget
+    this.%models_NAME%Service.create({
+      id: undefined,
+      creationDate: undefined,
+    }).subscribe(
+      res => {
+        this.listApp.refresh();
+        console.log(res);
+      },
+      err => console.error(err),
+    );
   }
 
 }
