@@ -366,6 +366,27 @@ const run = async () => {
           path: path.join(path.join(path.join(path.join($path,'src'), 'app'), 'widgets'), `${data.names.names}-list`),
           fileName: `${data.names.names}-list.datasource.ts`,
         });
+        // the creation/update form widget
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(path.join(templatePath, `${data.end.path}`), 'widgets'), 'model-form'), 'models-form.component.template.txt')).toString(),
+          path: path.join(path.join(path.join(path.join($path,'src'), 'app'), 'widgets'), `${data.names.names}-form`),
+          fileName: `${data.names.names}-form.component.ts`,
+        });
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(path.join(templatePath, `${data.end.path}`), 'widgets'), 'model-form'), 'models-form.component.template.html.txt')).toString(),
+          path: path.join(path.join(path.join(path.join($path,'src'), 'app'), 'widgets'), `${data.names.names}-form`),
+          fileName: `${data.names.names}-form.component.html`,
+        });
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(path.join(templatePath, `${data.end.path}`), 'widgets'), 'model-form'), 'models-form.component.template.scss.txt')).toString(),
+          path: path.join(path.join(path.join(path.join($path,'src'), 'app'), 'widgets'), `${data.names.names}-form`),
+          fileName: `${data.names.names}-form.component.scss`,
+        });
+        templates.push({
+          file: fs.readFileSync(path.join(path.join(path.join(path.join(templatePath, `${data.end.path}`), 'widgets'), 'model-form'), 'models-form.component.template.test.txt')).toString(),
+          path: path.join(path.join(path.join(path.join($path,'src'), 'app'), 'widgets'), `${data.names.names}-form`),
+          fileName: `${data.names.names}-form.component.spec.ts`,
+        });
       }
     }
 
@@ -500,12 +521,13 @@ const run = async () => {
       } else if (data.type.name === 'page' || data.type.name === 'p') {
         // parse the appModule and find the provider
         strToFind = 'declarations: [';
-        strToImport = `\n    ${data.names.Names}ListComponent,\n    ${data.names.Names}Component,`
+        strToImport = `\n    ${data.names.Names}ListComponent,\n    ${data.names.Names}Component,\n    ${data.names.Names}FormComponent,`
         if (appModule.indexOf('declarations: []') !== -1) {
           strToImport = strToImport + `\n  `;
         }
         strImporting = `import { ${data.names.Names}Component } from './pages/${data.names.names}-page/${data.names.names}.component';\n`;
         strImporting += `import { ${data.names.Names}ListComponent } from './widgets/${data.names.names}-list/${data.names.names}-list.component';\n`;
+        strImporting += `import { ${data.names.Names}FormComponent } from './widgets/${data.names.names}-form/${data.names.names}-form.component';\n`;
 
       }
       // modify the app.module.ts file

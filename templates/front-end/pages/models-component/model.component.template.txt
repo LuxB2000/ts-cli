@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 
 import { %Models_NAME%Service } from 'src/app/services/%model_NAME%/%models_NAME%.service';
+import { %Models_NAME%FormComponent } from 'src/app/widgets/%models_NAME%-form/%models_NAME%-form.component';
 import { %Models_NAME%ListComponent } from 'src/app/widgets/%models_NAME%-list/%models_NAME%-list.component';
 
 @Component({
@@ -13,6 +15,7 @@ export class %Models_NAME%Component implements OnInit {
   @ViewChild(%Models_NAME%ListComponent) listApp: %Models_NAME%ListComponent;
   constructor(
     private readonly %models_NAME%Service: %Models_NAME%Service,
+    public dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
@@ -25,16 +28,23 @@ export class %Models_NAME%Component implements OnInit {
   create(): void {
     console.log('create');
     // @TODO here call a widget
+    /*
     this.%models_NAME%Service.create({
       id: undefined,
       creationDate: undefined,
     }).subscribe(
-      res => {
-        this.listApp.refresh();
-        console.log(res);
-      },
+      res => this.listApp.refresh(),
       err => console.error(err),
     );
+    */
+    const dialogRef = this.dialog.open(%Models_NAME%FormComponent, {
+      width: '350px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      this.listApp.refresh();
+    });
   }
 
 }

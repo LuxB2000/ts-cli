@@ -1,0 +1,25 @@
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
+import { %Models_NAME%Service } from 'src/app/services/actor/%models_NAME%.service';
+
+@Component({
+  selector: 'app-%models_NAME%-form',
+  templateUrl: './%models_NAME%-form.component.html',
+  styleUrls: ['./%models_NAME%-form.component.scss']
+})
+export class %Models_NAME%FormComponent implements OnInit {
+
+  constructor(
+    public dialogRef: MatDialogRef<%Models_NAME%FormComponent>,
+    private readonly %models_NAME%Service: %Models_NAME%Service,
+  ) {
+  }
+
+  ngOnInit(): void {
+  }
+
+  onNoClick() {
+    this.dialogRef.close();
+  }
+
+}
