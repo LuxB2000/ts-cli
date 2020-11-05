@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+
 import { %Models_NAME%Service } from 'src/app/services/actor/%models_NAME%.service';
+import { %Model_NAME% } from 'src/app/models/%model_NAME%';
 
 @Component({
   selector: 'app-%models_NAME%-form',
@@ -9,17 +11,49 @@ import { %Models_NAME%Service } from 'src/app/services/actor/%models_NAME%.servi
 })
 export class %Models_NAME%FormComponent implements OnInit {
 
+  // is true if the form renders a new - empty - model
+  public isNew: boolean;
+  // the model presented/recorded on the page
+  public %model_NAME%: %Model_NAME%;
+
   constructor(
     public dialogRef: MatDialogRef<%Models_NAME%FormComponent>,
     private readonly %models_NAME%Service: %Models_NAME%Service,
+    @Inject(MAT_DIALOG_DATA) public data: %Model_NAME%,
   ) {
+    this.isNew = data === undefined || data.id === undefined;
+    if (this.isNew) {
+      this.%model_NAME% = {
+        id: undefined,
+        creationDate: new Date(Date.now()),
+      }
+    } else {
+      this.%model_NAME% = data;
+    }
   }
 
   ngOnInit(): void {
   }
 
+  /**
+   * Closes Dialog and do not save
+   */
   onNoClick() {
     this.dialogRef.close();
   }
 
+  /**
+   * Saves the data in BE
+   */
+  save() {
+    this.%models_NAME%Service.create({
+      id: undefined,
+      creationDate: undefined,
+    }).subscribe(
+      res => {},
+      err => console.error(err),
+    );
+  }
+
+  edit (model: %Model_NAME%) {}
 }

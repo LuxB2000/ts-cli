@@ -1,11 +1,12 @@
-<h1 mat-dialog-title>Hi </h1>
+<h1 mat-dialog-title *ngIf="isNew"> New Actor </h1>
+<h1 mat-dialog-title *ngIf="!isNew"> Actor {{actor.id}} </h1>
+
 <div mat-dialog-content>
-  <p>What's your favorite animal?</p>
   <mat-form-field>
-    <mat-label>Favorite Animal</mat-label>
+    <mat-label>Nothing here yet !</mat-label>
   </mat-form-field>
 </div>
 <div mat-dialog-actions>
-  <button mat-button (click)="onNoClick()">No Thanks</button>
-  <button mat-button [mat-dialog-close]="data.animal" cdkFocusInitial>Ok</button>
+  <button mat-button (click)="onNoClick()"> Cancel </button>
+  <button mat-button cdkFocusInitial (click)="save()">Save</button>
 </div>

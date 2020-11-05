@@ -7,13 +7,13 @@
 
   <ng-container matColumnDef="creationDate">
     <th mat-header-cell *matHeaderCellDef> Creation Date </th>
-    <td mat-cell *matCellDef="let elem"> {{elem.creationDate | date:medium}} </td>
+    <td mat-cell *matCellDef="let elem"> {{elem.creationDate}} </td>
   </ng-container>
 
   <ng-container matColumnDef="actions">
     <th mat-header-cell *matHeaderCellDef> Actions </th>
     <td mat-cell *matCellDef="let elem">
-      <span class="material-icons" title="edit"> edit </span>
+      <button class="mdc-icon-button material-icons" (click)="edit(elem)"> edit </button>
       <button class="mdc-icon-button material-icons" (click)="delete(elem.id)"> delete </button>
     </td>
   </ng-container>
