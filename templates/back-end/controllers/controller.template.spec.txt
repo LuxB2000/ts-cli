@@ -8,7 +8,7 @@ import { %Models_NAME%Controller } from './%model_NAME%.controller';
 import { %Models_NAME%Service } from '../services/%model_NAME%.service';
 import { %Models_NAME%ServiceStub } from '../test/mock/%model_NAME%.mock.service';
 import { %Model_NAME%Mapper } from '../mappers/%model_NAME%.mapper';
-import { MOCK_%MODEL_NAME%_DTOS, MOCK_%MODEL_NAME%_MODELS } from '../test/data/%model_NAME%.mock.data';
+import { MOCK_%MODEL_NAME%_DTOS, MOCK_%MODEL_NAME%_MODELS, MOCK_PAGINATED_%MODELS_NAME% } from '../test/data/%model_NAME%.mock.data';
 import { MockLogger } from '../test/mock/logger.mock';
 import { Logger } from '../tools/logger/logger';
 
@@ -47,8 +47,12 @@ describe('%Models_NAME% Controller', () => {
     it(`should call service.getAll()`, async () => {
       let response;
       let error;
-      const serviceSpy = jest.spyOn(service, 'getAll');
-      await controller.getAll().subscribe(
+      const pageSize = 10;
+      const pageIndex = 0;
+      const sortName = 'lastModificationBy';
+      const sortDirection = 1;
+      const serviceSpy = jest.spyOn(service, 'getAllPaginated');
+      await controller.getAll(pageSize, pageIndex, sortName, sortDirection).subscribe(
         res => response = res,
         err => error = err,
       );
@@ -59,18 +63,25 @@ describe('%Models_NAME% Controller', () => {
     it(`should map the response from the service to a DTO and return it`, async () => {
       let response;
       let error;
-      const mapperSpy = jest.spyOn(%Model_NAME%Mapper, 'toDTO').mockReturnValue(MOCK_%MODEL_NAME%_DTOS[0]);
-      await controller.getAll().subscribe(
+      const pageSize = 10;
+      const pageIndex = 0;
+      const sortName = 'lastModificationBy';
+      const sortDirection = 1;
+      const mapperSpy = jest.spyOn(%Model_NAME%Mapper, 'toPaginatedDTO').mockReturnValue(MOCK_PAGINATED_%MODELS_NAME%);
+      await controller.getAll(pageSize, pageIndex, sortName, sortDirection).subscribe(
         res => response = res,
         err => error = err,
       );
-
       expect(error).toBeUndefined();
       expect(mapperSpy).toHaveBeenCalledTimes(1);
-      expect(mapperSpy).toHaveBeenCalledWith(MOCK_%MODEL_NAME%_MODELS[0]);
+      expect(mapperSpy).toHaveBeenCalledWith({
+        pageSize,
+        pageIndex,
+        totalCount: MOCK_%MODEL_NAME%_MODELS.length,
+        %models_NAME%: MOCK_%MODEL_NAME%_MODELS,
+      });
       expect(response).not.toBeUndefined();
-      expect(response).toEqual(MOCK_%MODEL_NAME%_DTOS);
-    });
+      expect(response).toEqual(MOCK_PAGINATED_%MODELS_NAME%);    });
   });
 
   describe('create', () => {

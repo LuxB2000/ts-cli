@@ -60,5 +60,6 @@ Note: you need to add the following Module to your main app.module: MatCardModul
 
 - FE paginated pages and API
 - switch Models_NAME -> MODEL_Names, etc.
+- Detect aut. FE/BE and make the path auto. detect the app.module, also makes all the path relative to that path.
 - makes the index.js in typescript
 - parse a model files and introduce properties in templates

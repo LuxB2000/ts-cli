@@ -3,8 +3,8 @@
  * This class contains only static function mapping %Model_NAME% objects.
  */
 
-import { %Model_NAME% } from '../models/%model_NAME%.model';
-import { %Model_NAME%DTO } from '../dto/%model_NAME%.dto';
+import { %Model_NAME%, Paginated%Models_NAME% } from '../models/%model_NAME%.model';
+import { %Model_NAME%DTO, Paginated%Models_NAME%DTO } from '../dto/%model_NAME%.dto';
 import { I%Model_NAME%DBO, %Model_NAME%DBO } from '../dbo/%model_NAME%.schema';
 
 export class %Model_NAME%Mapper {
@@ -62,5 +62,18 @@ export class %Model_NAME%Mapper {
       lastModificationBy: dbo.lastModificationBy,
       softDeleted: dbo.softDeleted,
     };
+  }
+
+  /**
+   * Maps a buisness paginated model to a DTO.
+   * @param models the paginated buisness models
+   */
+  static toPaginatedDTO(models: Paginated%Models_NAME%): Paginated%Models_NAME%DTO {
+    return {
+      pageSize: models.pageSize,
+      pageIndex: models.pageIndex,
+      totalCount: models.totalCount,
+      %models_NAME%: models.%models_NAME%.map((%model_NAME%: %Model_NAME%) => this.toDTO(%model_NAME%)),
+    }
   }
 }

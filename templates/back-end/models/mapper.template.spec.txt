@@ -4,7 +4,7 @@
  */
 
 import { %Model_NAME%Mapper } from './%model_NAME%.mapper';
-import { MOCK_%MODEL_NAME%_DTOS, MOCK_%MODEL_NAME%_MODELS, MOCK_%MODEL_NAME%_DBOS } from '../test/data/actor.mock.data';
+import { MOCK_%MODEL_NAME%_DTOS, MOCK_%MODEL_NAME%_MODELS, MOCK_%MODEL_NAME%_DBOS, MOCK_PAGINATED_%MODELS_NAME%} from '../test/data/%model_NAME%.mock.data';
 import { I%Model_NAME%DBO } from '../dbo/%model_NAME%.schema';
 
 describe('AlgorithmMapper', () => {
@@ -45,6 +45,18 @@ describe('AlgorithmMapper', () => {
         creationDate: MOCK_%MODEL_NAME%_DBOS[0].creationDate,
         lastModificationBy: MOCK_%MODEL_NAME%_DBOS[0].lastModificationBy,
         softDeleted: MOCK_%MODEL_NAME%_DBOS[0].softDeleted,
+      });
+    });
+  });
+  describe('toPaginatedDTO', () => {
+    it('should correcty map a paginated model to a paginated DTO', () => {
+      expect(%Model_NAME%Mapper.toPaginatedDTO(MOCK_PAGINATED_%MODELS_NAME%)).toEqual({
+        pageSize: MOCK_PAGINATED_%MODELS_NAME%.pageSize,
+        pageIndex: MOCK_PAGINATED_%MODELS_NAME%.pageIndex,
+        totalCount: MOCK_PAGINATED_%MODELS_NAME%.totalCount,
+        %models_NAME%: [
+          {id: MOCK_%MODEL_NAME%_DTOS[0].id, creationDate: MOCK_%MODEL_NAME%_DTOS[0].creationDate},
+        ],
       });
     });
   });

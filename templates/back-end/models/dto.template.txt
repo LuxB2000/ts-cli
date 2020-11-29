@@ -15,5 +15,5 @@ export interface Paginated%Models_NAME%DTO {
   pageIndex:  number;
   pageSize:   number;
   totalCount: number;
-  %models_NAME%: %Model_NAME%[];
+  %models_NAME%: %Model_NAME%DTO[];
 }

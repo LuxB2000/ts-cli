@@ -6,11 +6,21 @@
 import { of, Observable } from "rxjs";
 import { MOCK_%MODEL_NAME%_MODELS } from "../data/%model_NAME%.mock.data";
 import { %Model_NAME% } from "../../models/%model_NAME%.model";
+import { Paginated%Models_NAME%DTO } from "../../dto/%model_NAME%.dto";
 
 export class %Models_NAME%ServiceStub {
 
   getAll(): Observable<%Model_NAME%[]> {
     return of(MOCK_%MODEL_NAME%_MODELS);
+  }
+
+  getAllPaginated(pageSize: number, pageIndex: number, sortName: string, sortDirection: number): Observable<Paginated%Models_NAME%DTO> {
+    return of({
+      pageSize,
+      pageIndex,
+      totalCount: MOCK_%MODEL_NAME%_MODELS.length,
+      %models_NAME%: [... MOCK_%MODEL_NAME%_MODELS],
+    } as Paginated%Models_NAME%DTO)
   }
   
   getById(): Observable<%Model_NAME%> {

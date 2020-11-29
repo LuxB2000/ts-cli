@@ -9,7 +9,7 @@ import { mergeMap, map, toArray } from 'rxjs/operators';
 
 import { Logger } from '../tools/logger/logger';
 import { %Models_NAME%Service } from '../services/%model_NAME%.service';
-import { %Model_NAME% } from '../models/%model_NAME%.model';
+import { %Model_NAME%, Paginated%Models_NAME% } from '../models/%model_NAME%.model';
 import { %Model_NAME%DTO, Paginated%Models_NAME%DTO } from '../dto/%model_NAME%.dto';
 import { %Model_NAME%Mapper } from '../mappers/%model_NAME%.mapper';
 
@@ -44,7 +44,7 @@ export class %Models_NAME%Controller {
   ): Observable<Paginated%Models_NAME%DTO> {
     return this.actorsService.getAllPaginated(
       Number(pageSize), Number(pageIndex), sortName, sortDirection
-    );
+    ).pipe(map((actors: Paginated%Models_NAME%) => ActorMapper.toPaginatedDTO(actors)));
   }
 
   @ApiOperation({ description: 'Create a %Model_NAME% by ID', summary: 'Create a %Model_NAME% by ID'})
