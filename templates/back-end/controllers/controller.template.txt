@@ -27,7 +27,7 @@ export class %Models_NAME%Controller {
   @ApiInternalServerErrorResponse( {description: 'An internal error occured', status: 500})
   @ApiUnauthorizedResponse( {description: 'Not permitted', status: 401})
   /*@Get()
-  getAll(): Observable<%Model_NAME%DTO[]> {
+  getAll(): Observable<%Models_NAME%DTO[]> {
     return this.%models_NAME%Service.getAll().pipe(
       mergeMap((%model_NAME%: %Model_NAME%[]) => %model_NAME%),
       map((model: %Model_NAME%) => %Model_NAME%Mapper.toDTO(model)),
@@ -39,8 +39,12 @@ export class %Models_NAME%Controller {
   getAll(
     @Query('pageSize') pageSize: number,
     @Query('pageIndex') pageIndex: number,
-  ): Observable<Paginated%Model_NAME%DTO> {
-    return this.%models_NAME%Service.getAllPaginated(Number(pageSize), Number(pageIndex), 'something', 1);
+    @Query('sortName') sortName: string,
+    @Query('sortDirection') sortDirection: number,
+  ): Observable<Paginated%Models_NAME%DTO> {
+    return this.actorsService.getAllPaginated(
+      Number(pageSize), Number(pageIndex), sortName, sortDirection
+    );
   }
 
   @ApiOperation({ description: 'Create a %Model_NAME% by ID', summary: 'Create a %Model_NAME% by ID'})

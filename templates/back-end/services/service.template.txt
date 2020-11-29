@@ -86,7 +86,9 @@ export class %Models_NAME%Service {
   public getAllPaginated(
     pageSize: number, pageIndex: number, sortName: string, sortDirection: number
   ): Observable<Paginated%Models_NAME%> {
-    const %models_NAME%$ = this.%model_NAME%Model.find().skip(pageIndex * pageSize).limit(pageSize);
+    const sortFilter = {};
+    sortFilter[sortName] = sortDirection;
+    const %models_NAME%$ = this.%model_NAME%Model.find().skip(pageIndex * pageSize).limit(pageSize).sort(sortFilter);
     const totalNumber$ = this.%model_NAME%Model.find().count();
     return from(%models_NAME%$).pipe(
       map((dbos: I%Model_NAME%DBO[]) => dbos.map(dbo => %Model_NAME%Mapper.fromDBO(dbo)) as %Model_NAME%[]),
