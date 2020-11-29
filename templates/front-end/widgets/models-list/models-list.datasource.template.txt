@@ -1,0 +1,33 @@
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { %Model_NAME% } from 'src/app/models/%model_NAME%';
+import { %Models_NAME%Service } from 'src/app/services/%model_NAME%/%models_NAME%.service';
+
+export class %Models_NAME%ListDataSrouce {
+
+  private %models_NAME%: BehaviorSubject<%Model_NAME%[]>;
+
+  constructor(
+    private readonly %models_NAME%Service: %Models_NAME%Service,
+  ) {
+    this.%models_NAME% = new BehaviorSubject<%Model_NAME%[]>([]);
+  }
+
+  connect() {
+    return this.%models_NAME%.asObservable();
+  }
+
+  disconnect() {
+    this.%models_NAME%.complete();
+  }
+
+  /**
+   * Load all the data from the service
+   */
+  loadData() {
+    this.%models_NAME%Service.getAll().pipe().subscribe(
+      (res: %Model_NAME%[]) => this.%models_NAME%.next(res),
+      err => console.error(err),
+    );
+  }
+
+}

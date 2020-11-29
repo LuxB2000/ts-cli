@@ -1,0 +1,11 @@
+<mat-card>
+  <mat-card-title>
+    %Models_NAME%
+    <div>
+      <button class="mdc-icon-button material-icons" (click)="create()"> add </button>
+    </div>
+  </mat-card-title>
+  <mat-card-content>
+    <app-%models_NAME%-list></app-%models_NAME%-list>
+  </mat-card-content>
+</mat-card>
