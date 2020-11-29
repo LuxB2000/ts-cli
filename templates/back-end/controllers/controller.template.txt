@@ -2,7 +2,7 @@
  * This file has been generated using TS-CLI.
  */
 
-import { Controller, Get, Post, Delete, Param, Put, Body } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Put, Body, Query } from '@nestjs/common';
 import { ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { Observable, throwError } from 'rxjs';
 import { mergeMap, map, toArray } from 'rxjs/operators';
@@ -10,7 +10,7 @@ import { mergeMap, map, toArray } from 'rxjs/operators';
 import { Logger } from '../tools/logger/logger';
 import { %Models_NAME%Service } from '../services/%model_NAME%.service';
 import { %Model_NAME% } from '../models/%model_NAME%.model';
-import { %Model_NAME%DTO } from '../dto/%model_NAME%.dto';
+import { %Model_NAME%DTO, Paginated%Models_NAME%DTO } from '../dto/%model_NAME%.dto';
 import { %Model_NAME%Mapper } from '../mappers/%model_NAME%.mapper';
 
 @Controller('api/%model_NAME%')
@@ -26,13 +26,21 @@ export class %Models_NAME%Controller {
   @ApiOkResponse({ description: 'Succes', status: 200})
   @ApiInternalServerErrorResponse( {description: 'An internal error occured', status: 500})
   @ApiUnauthorizedResponse( {description: 'Not permitted', status: 401})
-  @Get()
+  /*@Get()
   getAll(): Observable<%Model_NAME%DTO[]> {
     return this.%models_NAME%Service.getAll().pipe(
       mergeMap((%model_NAME%: %Model_NAME%[]) => %model_NAME%),
       map((model: %Model_NAME%) => %Model_NAME%Mapper.toDTO(model)),
       toArray(),
     );
+  }
+  */
+  @Get()
+  getAll(
+    @Query('pageSize') pageSize: number,
+    @Query('pageIndex') pageIndex: number,
+  ): Observable<Paginated%Model_NAME%DTO> {
+    return this.%models_NAME%Service.getAllPaginated(Number(pageSize), Number(pageIndex), 'something', 1);
   }
 
   @ApiOperation({ description: 'Create a %Model_NAME% by ID', summary: 'Create a %Model_NAME% by ID'})

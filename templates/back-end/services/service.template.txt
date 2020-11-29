@@ -10,7 +10,7 @@ import { Observable, of, from, throwError } from 'rxjs';
 import { switchMap, mergeMap, concatMap, map, toArray, catchError } from 'rxjs/operators';
 
 import { Logger } from '../tools/logger/logger';
-import { %Model_NAME% } from '../models/%model_NAME%.model';
+import { %Model_NAME%, Paginated%Models_NAME% } from '../models/%model_NAME%.model';
 import { I%Model_NAME%DBO } from '../dbo/%model_NAME%.schema';
 import { %Model_NAME%Mapper } from '../mappers/%model_NAME%.mapper';
 
@@ -65,12 +65,44 @@ export class %Models_NAME%Service {
   }
 
   /**
-   * Get all the %Model_NAME% considering a pagintation
+   * Get all the %Model_NAME% 
    */
   public getAll(): Observable<%Model_NAME%[]> {
     return from(this.%model_NAME%Model.find()).pipe(
       switchMap((dbos: I%Model_NAME%DBO[]) => dbos.map(dbo => %Model_NAME%Mapper.fromDBO(dbo))),
       toArray(),
+      catchError(err => {
+        this.logger.error(`${err.message}`, err.trace);
+        return throwError(err);
+      }),
+    );
+  }
+
+  /**
+   * Get all the %Model_NAME% considering a pagintation
+   * @param pageSize the maximal number of elements on the page
+   * @param pageIndex the page number, this will skip the pageSize * pageIndex first elements
+   */
+  public getAllPaginated(
+    pageSize: number, pageIndex: number, sortName: string, sortDirection: number
+  ): Observable<Paginated%Models_NAME%> {
+    const %models_NAME%$ = this.%model_NAME%Model.find().skip(pageIndex * pageSize).limit(pageSize);
+    const totalNumber$ = this.%model_NAME%Model.find().count();
+    return from(%models_NAME%$).pipe(
+      map((dbos: I%Model_NAME%DBO[]) => dbos.map(dbo => %Model_NAME%Mapper.fromDBO(dbo)) as %Model_NAME%[]),
+      switchMap((%models_NAME%: %Model_NAME%[]) => {
+        return from(totalNumber$).pipe(
+          map((totalCount: number) => ({
+            pageIndex,
+            pageSize,
+            totalCount,
+            %models_NAME%,
+          } as Paginated%Models_NAME%)),
+          catchError(err => {
+            return throwError(err);
+          }),
+        );
+      }),
       catchError(err => {
         this.logger.error(`${err.message}`, err.trace);
         return throwError(err);

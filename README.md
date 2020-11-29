@@ -52,9 +52,13 @@ Note: you need to add the following Module to your main app.module: MatCardModul
 
 # Sources
 
+# In progress
+
+- BE paginated pages and API
+
 # TODOs
 
-- paginated pages and API
+- FE paginated pages and API
 - switch Models_NAME -> MODEL_Names, etc.
 - makes the index.js in typescript
 - parse a model files and introduce properties in templates

@@ -11,3 +11,10 @@ export interface %Model_NAME% {
   lastModificationDate: Date;
   lastModificationBy: string;
 }
+
+export interface Paginated%Models_NAME% {
+  pageIndex:  number;
+  pageSize:   number;
+  totalCount: number;
+  %models_NAME%: %Model_NAME%[];
+}
